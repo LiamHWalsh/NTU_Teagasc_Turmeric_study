@@ -1,0 +1,10 @@
+.Rhistory
+.RData
+.Rproj.user
+data/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+results/*
+!results/.gitkeep
+figures/*
+!figures/.gitkeep
