@@ -1,0 +1,8 @@
+Report contents generated on: 1754065285 
+
+ - preprocessing_cleaned_metadata.csv: Cleaned preprocessing metadata
+ - species_profile_filtered.csv: Filtered species-level relative abundance matrix
+ - species_profile_unfiltered.csv: Unfiltered species-level matrix
+ - species_prevalence_breakdown.csv: Prevalence of species across samples
+ - alpha_diversity_summary.csv: Richness, Shannon, and Simpson indices
+ - beta_diversity_TD_q2_matrix.csv: Pairwise total dissimilarity (q = 2)
