@@ -1,0 +1,7 @@
+effect,group,term,estimate,std.error,statistic,df,p.value,profile,metric,model_type
+fixed,,(Intercept),26.4238099720141,1.81083599983142,14.5920502875324,30.0769908211224,3.47033448270129e-15,Species,Shannon,lmer
+fixed,,turmeric_statusTaken,-6.90683071556352,4.37296183127517,-1.5794399727357,29.9030308550721,0.124756482678587,Species,Shannon,lmer
+fixed,,timepoint2_weeks,1.83223857459002,2.17887674789251,0.840909691822738,24.3861100892498,0.408568703504773,Species,Shannon,lmer
+fixed,,timepoint6_months,-0.0594933040280599,3.93008538263947,-0.0151379164154708,28.2244528970172,0.988028653506336,Species,Shannon,lmer
+ran_pars,block_number,sd__(Intercept),4.43704528651087,,,,,Species,Shannon,lmer
+ran_pars,Residual,sd__Observation,5.72526518320496,,,,,Species,Shannon,lmer
