@@ -1,0 +1,2 @@
+profile,metric,timepoint,test_type,statistic,p_value,q_value,cohens_d,effect_magnitude
+Species,Simpson,6_months,t-test,1.53671401762231,0.218572970318481,,1.14050138640173,large
