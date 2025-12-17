@@ -1,0 +1,2 @@
+profile,metric,timepoint,test_type,statistic,p_value,q_value,cohens_d,effect_magnitude
+Species,Richness,6_months,t-test,0.689106864781518,0.509685666511447,,0.288944951908441,small
