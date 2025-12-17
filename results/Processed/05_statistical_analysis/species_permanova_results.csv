@@ -1,0 +1,4 @@
+Df,SumOfSqs,R2,F,Pr(>F),term,profile
+0,-2.1316282072803e-14,-5.11720885126542e-16,-Inf,,turmeric_status:timepoint,Species
+36,38.5524499757918,0.925494125008767,,,Residual,Species
+39,41.6560720743922,1,,,Total,Species
