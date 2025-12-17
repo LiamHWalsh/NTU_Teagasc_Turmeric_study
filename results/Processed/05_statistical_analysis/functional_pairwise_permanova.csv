@@ -1,0 +1,4 @@
+Df,SumOfSqs,R2,F,Pr(>F),timepoint,term,profile
+1,0.500326654207741,0.0996858440689057,0.996510596562048,0.7081,6_months,Model,Functional
+9,4.51870748128998,0.900314155931094,,,6_months,Residual,Functional
+10,5.01903413549772,1,,,6_months,Total,Functional
