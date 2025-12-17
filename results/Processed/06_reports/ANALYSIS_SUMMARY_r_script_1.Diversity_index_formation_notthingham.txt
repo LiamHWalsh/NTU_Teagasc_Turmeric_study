@@ -1,0 +1,160 @@
+═══════════════════════════════════════════════════════════════════════════════
+ANALYSIS REPORT: DIVERSITY INDICES CALCULATION
+═══════════════════════════════════════════════════════════════════════════════
+
+Script: 05_diversity_indices_calculation.R
+Generated: 2025-12-17 00:38:31.375477
+Repository: LiamHWalsh/NTU_Teagasc_Turmeric_study
+Branch: main
+
+PIPELINE WORKFLOW:
+  Input:  results/Raw
+  Output (Data): results/Processed/04_diversity_analysis
+  Output (Figures): figures/04_diversity_analysis
+
+═══════════════════════════════════════════════════════════════════════════════
+REPOSITORY STRUCTURE
+═══════════════════════════════════════════════════════════════════════════════
+
+NTU_Teagasc_Turmeric_study/
+├── results/                          (Data outputs, analysis-ready files)
+│   ├── 00_raw_data/                 Input: Raw sequencing data
+│   ├── 01_preprocessing/            QC metrics, filtered reads
+│   ├── 02_taxonomic_profiling/      Species abundance matrices
+│   ├── 03_functional_profiling/     Pathway abundance matrices
+│   ├── 04_diversity_analysis/       Alpha/beta diversity ← CURRENT
+│   ├── 05_statistical_analysis/     Stats, models, tests
+│   └── 06_reports/                  Final summaries
+│
+└── figures/                          (All visualizations)
+    ├── 01_preprocessing/            QC plots, read quality
+    ├── 02_taxonomic_profiling/      Taxonomy barplots, heatmaps
+    ├── 03_functional_profiling/     Pathway plots
+    ├── 04_diversity_analysis/       Alpha/beta plots ← FIGURES HERE
+    ├── 05_statistical_analysis/     Statistical plots
+    └── 06_reports/                  Publication figures
+
+═══════════════════════════════════════════════════════════════════════════════
+FILES GENERATED
+═══════════════════════════════════════════════════════════════════════════════
+
+PREPROCESSING OUTPUTS → results/Processed/01_preprocessing
+  ├── sequencing_run_summary_statistics.csv
+  │   └── Cleaned preprocessing metadata with QC metrics
+
+TAXONOMIC PROFILING OUTPUTS → results/Processed/02_taxonomic_profiling
+  ├── species_profile_unfiltered.csv
+  │   └── Complete unfiltered species abundance matrix
+  ├── species_profile_filtered.csv
+  │   └── Filtered species abundance matrix (max abundance > 0.1, prevalence > 10%)
+  └── species_prevalence_breakdown.csv
+      └── Species prevalence with full taxonomic breakdown (kingdom to strain)
+
+FUNCTIONAL PROFILING OUTPUTS → results/Processed/03_functional_profiling
+  ├── functional_profile_filtered.csv
+  │   └── Filtered pathway abundance matrix (max abundance > 0.1, prevalence > 10%)
+  └── functional_prevalence_breakdown.csv
+      └── Pathway prevalence across all samples
+
+DIVERSITY ANALYSIS OUTPUTS → results/Processed/04_diversity_analysis
+  
+  Species Diversity Metrics:
+  ├── species_alpha_diversity.csv
+  │   └── Richness (q=0), Shannon (q=1), Simpson (q=2) indices per sample
+  ├── species_beta_diversity_TD_q2.csv
+  │   └── Pairwise total dissimilarity (Hill numbers, q=2)
+  ├── species_beta_diversity_distance_matrix.csv
+  │   └── Square distance matrix for ordination analyses
+  └── species_sample_summary.csv
+      └── Per-sample summary: total abundance + all diversity metrics
+  
+  Functional Diversity Metrics:
+  ├── functional_alpha_diversity.csv
+  │   └── Richness (q=0), Shannon (q=1), Simpson (q=2) indices per sample
+  ├── functional_beta_diversity_TD_q2.csv
+  │   └── Pairwise total dissimilarity (Hill numbers, q=2)
+  ├── functional_beta_diversity_distance_matrix.csv
+  │   └── Square distance matrix for ordination analyses
+  └── functional_sample_summary.csv
+      └── Per-sample summary: total abundance + all diversity metrics
+
+FUTURE FIGURES (to be generated) → figures/04_diversity_analysis
+  
+  Suggested visualizations for this analysis step:
+  ├── species_alpha_diversity_boxplot.png
+  ├── species_beta_diversity_pcoa.png
+  ├── species_rarefaction_curves.png
+  ├── functional_alpha_diversity_boxplot.png
+  ├── functional_beta_diversity_pcoa.png
+  └── diversity_comparison_heatmap.png
+
+═══════════════════════════════════════════════════════════════════════════════
+ANALYSIS PARAMETERS
+═══════════════════════════════════════════════════════════════════════════════
+
+Filtering Criteria:
+  • Maximum abundance threshold: > 0.1
+  • Prevalence threshold: Present in > 10% of samples
+  • Samples with zero abundance removed
+
+Diversity Metrics:
+  • Alpha diversity: Hill numbers
+    - q = 0 (Richness): Number of features
+    - q = 1 (Shannon): Exponential of Shannon entropy
+    - q = 2 (Simpson): Inverse Simpson concentration
+  
+  • Beta diversity: Hill-based total dissimilarity
+    - q = 2 (Simpson-type): Emphasizes dominant features
+    - Pairwise comparisons between all samples
+    - Distance matrices suitable for PCoA, NMDS, etc.
+
+═══════════════════════════════════════════════════════════════════════════════
+RESULTS SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+SPECIES ANALYSIS:
+  Features retained: 241
+  Samples analyzed:  42
+  Total abundance:   3,483.361
+  
+  Alpha Diversity Range:
+    Richness: 38 - 93
+    Shannon:  9.79 - 44.05
+    Simpson:  5.27 - 30.87
+
+FUNCTIONAL ANALYSIS:
+  Pathways retained: 421
+  Samples analyzed:  42
+  Total abundance:   4.2e+07
+  
+  Alpha Diversity Range:
+    Richness: 200 - 359
+    Shannon:  2.69 - 3.19
+    Simpson:  1.51 - 1.88
+
+═══════════════════════════════════════════════════════════════════════════════
+NEXT STEPS
+═══════════════════════════════════════════════════════════════════════════════
+
+The following analyses can now be performed using these outputs:
+
+1. Create Visualizations (→ figures/04_diversity_analysis)
+   • Alpha diversity boxplots/violin plots by group
+   • PCoA/NMDS ordinations using beta diversity matrices
+   • Rarefaction curves
+   • Diversity heatmaps
+
+2. Statistical Analysis (→ results/Processed/05_statistical_analysis)
+   • Compare diversity between groups (diet, treatment, timepoint)
+   • PERMANOVA on beta diversity matrices
+   • Differential abundance testing
+   • Correlation analyses
+   
+   Figures for statistics (→ figures/05_statistical_analysis)
+
+3. Final Reports (→ results/Processed/06_reports)
+   • Integrated analysis summaries
+   • Publication-ready figures
+   • Supplementary tables
+
+═══════════════════════════════════════════════════════════════════════════════
