@@ -1,0 +1,2 @@
+profile,metric,timepoint,test_type,statistic,p_value,q_value,cohens_d,effect_magnitude
+Species,Shannon,6_months,t-test,1.72292743570108,0.127058261181866,,0.877502560424842,large
