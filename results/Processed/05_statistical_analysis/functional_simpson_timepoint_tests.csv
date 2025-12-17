@@ -1,0 +1,2 @@
+profile,metric,timepoint,test_type,statistic,p_value,q_value,cohens_d,effect_magnitude
+Functional,Simpson,6_months,t-test,-0.270562194494134,0.80685161962559,,-0.232860356358456,small
