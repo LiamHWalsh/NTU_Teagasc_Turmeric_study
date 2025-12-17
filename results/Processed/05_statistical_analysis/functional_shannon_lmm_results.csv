@@ -1,0 +1,7 @@
+effect,group,term,estimate,std.error,statistic,df,p.value,profile,metric,model_type
+fixed,,(Intercept),2.91369533918104,0.0286274154929843,101.779894866691,26.1267983881143,1.71254503659041e-35,Functional,Shannon,lmer
+fixed,,turmeric_statusTaken,-0.048334331025788,0.0626846502419852,-0.77107124055411,27.1514937286882,0.447323337413135,Functional,Shannon,lmer
+fixed,,timepoint2_weeks,0.0507659774939786,0.0306648363711552,1.65551111636557,23.5167773193836,0.111106452400641,Functional,Shannon,lmer
+fixed,,timepoint6_months,0.101904115680037,0.0560230180715316,1.81896868801183,26.0478396299358,0.0804316801041653,Functional,Shannon,lmer
+ran_pars,block_number,sd__(Intercept),0.0818959542579474,,,,,Functional,Shannon,lmer
+ran_pars,Residual,sd__Observation,0.0800344635835559,,,,,Functional,Shannon,lmer
