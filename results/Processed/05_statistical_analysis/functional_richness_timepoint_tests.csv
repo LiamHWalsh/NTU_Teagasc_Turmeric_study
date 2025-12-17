@@ -1,0 +1,2 @@
+profile,metric,timepoint,test_type,statistic,p_value,q_value,cohens_d,effect_magnitude
+Functional,Richness,6_months,t-test,0.524223524597065,0.616042108308095,,0.268891463898049,small
