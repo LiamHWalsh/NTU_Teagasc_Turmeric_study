@@ -1,0 +1,4 @@
+Df,SumOfSqs,R2,F,Pr(>F),term,profile
+0,-7.105427357601e-15,-3.63332680977571e-16,-Inf,,turmeric_status:timepoint,Functional
+36,18.0544280804644,0.923204675504082,,,Residual,Functional
+39,19.556257197903,1,,,Total,Functional
