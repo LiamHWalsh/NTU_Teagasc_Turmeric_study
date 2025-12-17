@@ -1,0 +1,50 @@
+═══════════════════════════════════════════════════════════════════════════════
+BAYESIAN STATISTICAL ANALYSIS REPORT: ALPHA DIVERSITY
+═══════════════════════════════════════════════════════════════════════════════
+
+Script: 06_statistical_analysis_alpha_diversity_BAYESIAN.R
+Generated: 2025-12-17 12:45:13.51941
+
+ANALYSIS OVERVIEW:
+  Method: Bayesian Linear Mixed Models (brms)
+  Chains: 4
+  Iterations: 4000 (2000 warmup)
+  Priors: Weakly informative
+
+═══════════════════════════════════════════════════════════════════════════════
+BAYESIAN APPROACH ADVANTAGES
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Full posterior distributions for all parameters
+2. Natural quantification of uncertainty
+3. Direct probability statements about effects
+4. Robust to small sample sizes
+5. Hypothesis testing via posterior probabilities
+
+═══════════════════════════════════════════════════════════════════════════════
+INTERPRETATION GUIDE
+═══════════════════════════════════════════════════════════════════════════════
+
+Fixed Effects:
+  • Estimate: Posterior mean
+  • Est.Error: Posterior standard deviation
+  • CI.Lower/Upper: 95% credible intervals
+  • Rhat: Convergence diagnostic (should be < 1.01)
+  • ESS: Effective sample size (should be > 400)
+
+Hypothesis Tests:
+  • Post.Prob: Posterior probability hypothesis is true
+  • Evid.Ratio: Evidence ratio (odds in favor)
+  • > 0.95: Strong evidence
+  • 0.90-0.95: Moderate evidence
+  • < 0.90: Weak evidence
+
+═══════════════════════════════════════════════════════════════════════════════
+CONVERGENCE STATUS
+═══════════════════════════════════════════════════════════════════════════════
+Species Profile:
+Richness: Rhat=1.0025 ✓, ESS ratio=0.1804 ✓Shannon: Rhat=1.0012 ✓, ESS ratio=0.1859 ✓Simpson: Rhat=1.0013 ✓, ESS ratio=0.2172 ✓
+Functional Profile:
+Richness: Rhat=1.0011 ✓, ESS ratio=0.3888 ✓Shannon: Rhat=1.0017 ✓, ESS ratio=0.1912 ✓Simpson: Rhat=1.0071 ✓, ESS ratio=0.1741 ✓
+
+✅ BAYESIAN ANALYSIS COMPLETE
