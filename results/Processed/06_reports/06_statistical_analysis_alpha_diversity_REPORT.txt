@@ -1,0 +1,104 @@
+═══════════════════════════════════════════════════════════════════════════════
+STATISTICAL ANALYSIS REPORT: ALPHA DIVERSITY
+═══════════════════════════════════════════════════════════════════════════════
+
+Script: 06_statistical_analysis_alpha_diversity.R
+Generated: 2025-12-17 11:21:21.351938
+Repository: LiamHWalsh/NTU_Teagasc_Turmeric_study
+Branch: main
+
+ANALYSIS OVERVIEW:
+  Input:  results/Processed/04_diversity_analysis
+  Output (Data): results/Processed/05_statistical_analysis
+  Output (Figures): figures/05_statistical_analysis
+
+═══════════════════════════════════════════════════════════════════════════════
+FILES GENERATED
+═══════════════════════════════════════════════════════════════════════════════
+
+STATISTICAL RESULTS → results/Processed/05_statistical_analysis
+
+Species Profile:
+  ├── species_richness_lmm_results.csv
+  ├── species_richness_timepoint_tests.csv
+  ├── species_shannon_lmm_results.csv
+  ├── species_shannon_timepoint_tests.csv
+  ├── species_simpson_lmm_results.csv
+  └── species_simpson_timepoint_tests.csv
+
+Functional Profile:
+  ├── functional_richness_lmm_results.csv
+  ├── functional_richness_timepoint_tests.csv
+  ├── functional_shannon_lmm_results.csv
+  ├── functional_shannon_timepoint_tests.csv
+  ├── functional_simpson_lmm_results.csv
+  └── functional_simpson_timepoint_tests.csv
+
+FIGURES → figures/05_statistical_analysis
+
+Species Profile:
+  ├── species_richness_alpha_diversity.png
+  ├── species_shannon_alpha_diversity.png
+  └── species_simpson_alpha_diversity.png
+
+Functional Profile:
+  ├── functional_richness_alpha_diversity.png
+  ├── functional_shannon_alpha_diversity.png
+  └── functional_simpson_alpha_diversity.png
+
+═══════════════════════════════════════════════════════════════════════════════
+ANALYSIS METHODS
+═══════════════════════════════════════════════════════════════════════════════
+
+Two complementary approaches were used:
+
+1. LINEAR MIXED MODELS (LMM) or LINEAR MODELS (LM)
+   • Accounts for repeated measures (participant as random effect)
+   • Tests main effects and interactions
+   • Model selection based on data structure:
+     - LMM if sufficient repeated measures
+     - LM if insufficient data for random effects
+
+2. TIMEPOINT-SPECIFIC TESTS
+   • Independent analysis at each timepoint
+   • Parametric (t-test) or non-parametric (Wilcoxon) based on normality
+   • Effect sizes (Cohen's d) calculated
+   • FDR correction for multiple comparisons
+
+EXPERIMENTAL DESIGN:
+  • Treatment groups: Control vs. Turmeric
+  • Timepoints: Baseline, 2 weeks, 6 months
+  • Metrics: Richness (q=0), Shannon (q=1), Simpson (q=2)
+  • Excluded: Participants who stopped turmeric treatment
+
+═══════════════════════════════════════════════════════════════════════════════
+INTERPRETATION GUIDE
+═══════════════════════════════════════════════════════════════════════════════
+
+LMM/LM Results:
+  • Fixed effects show overall impact of treatment and time
+  • Interaction terms (if present) show whether treatment effects vary by timepoint
+  • p < 0.05 indicates statistical significance
+
+Timepoint-Specific Results:
+  • Direct comparisons between groups at each timepoint
+  • q-values (FDR-adjusted) control for multiple testing
+  • Cohen's d effect sizes: 0.2 (small), 0.5 (medium), 0.8 (large)
+
+═══════════════════════════════════════════════════════════════════════════════
+NEXT STEPS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Beta Diversity Analysis
+   • PERMANOVA on distance matrices
+   • Ordination visualization (PCoA, NMDS)
+
+2. Differential Abundance Testing
+   • Identify specific taxa/pathways affected by treatment
+   • Time-dependent changes
+
+3. Final Report Generation
+   • Integrate all statistical findings
+   • Publication-ready tables and figures
+
+═══════════════════════════════════════════════════════════════════════════════
