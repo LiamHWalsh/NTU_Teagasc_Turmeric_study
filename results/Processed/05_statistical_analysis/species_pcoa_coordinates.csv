@@ -1,0 +1,41 @@
+sample_id,PC1,PC2,PC3,block_number,sample_id.1,block_code,block_letter,status,timepoint,turmeric_group,turmeric_status
+Nottingham_11A_S19,-0.43093233246237,0.271788781368653,0.169860912542822,11,Nottingham_11A_S19,11A,A,Turmeric 3 months,Baseline,Control,Not taken
+Nottingham_11B_S20,-0.164476893547901,0.243634646676554,0.191180920178108,11,Nottingham_11B_S20,11B,B,Turmeric 3 months,2_weeks,Control,Not taken
+Nottingham_14A_S22,-0.0978418649173768,0.218299426043637,-0.0531995139161054,14,Nottingham_14A_S22,14A,A,Baseline sample only,Baseline,Control,Not taken
+Nottingham_15A_S23,-0.189275609440865,0.622521307531796,-0.244792032094196,15,Nottingham_15A_S23,15A,A,Turmeric 6 months,Baseline,Treatment,Not taken
+Nottingham_15B_S24,0.200814770924021,0.392673024283998,-0.297538802320768,15,Nottingham_15B_S24,15B,B,Turmeric 6 months,2_weeks,Treatment,Not taken
+Nottingham_15C_S25,0.0818736693557311,0.636434065669625,-0.389772904887823,15,Nottingham_15C_S25,15C,C,Turmeric 6 months,6_months,Treatment,Taken
+Nottingham_16A_S26,-0.120685790838655,-0.28689296429072,-0.491334827914147,16,Nottingham_16A_S26,16A,A,Turmeric 6 months,Baseline,Treatment,Not taken
+Nottingham_16B_S27,-0.633078932523331,-0.0142692900807144,-0.68900197699865,16,Nottingham_16B_S27,16B,B,Turmeric 6 months,2_weeks,Treatment,Not taken
+Nottingham_16C_S28,0.261392346824171,-0.271707866049226,-0.210381206845974,16,Nottingham_16C_S28,16C,C,Turmeric 6 months,6_months,Treatment,Taken
+Nottingham_18A_S29,0.481900176660615,-0.0071248069309506,0.183881917065691,18,Nottingham_18A_S29,18A,A,Didn't take turmeric,Baseline,Control,Not taken
+Nottingham_18B_S30,0.168194144531288,0.424950916508455,0.176931272081134,18,Nottingham_18B_S30,18B,B,Didn't take turmeric,2_weeks,Control,Not taken
+Nottingham_18C_S31,0.295741839747885,0.333283786962535,0.180766338961368,18,Nottingham_18C_S31,18C,C,Didn't take turmeric,6_months,Control,Not taken
+Nottingham_19A_S32,-0.281728481891832,-0.238289927285705,0.229618492159031,19,Nottingham_19A_S32,19A,A,Baseline sample only,Baseline,Control,Not taken
+Nottingham_20A_S33,0.249350497437217,0.117185940508786,-0.0251117541403395,20,Nottingham_20A_S33,20A,A,Turmeric 3 months,Baseline,Control,Not taken
+Nottingham_20B_S34,0.530381748302454,-0.124644701037093,-0.171969039241732,20,Nottingham_20B_S34,20B,B,Turmeric 3 months,2_weeks,Control,Not taken
+Nottingham_21A_S36,-0.0608839286241475,0.201110810707841,-0.363146869898469,21,Nottingham_21A_S36,21A,A,Turmeric 6 months,Baseline,Treatment,Not taken
+Nottingham_21B_S37,0.361971728131043,-0.201013499445799,-0.215024038650748,21,Nottingham_21B_S37,21B,B,Turmeric 6 months,2_weeks,Treatment,Not taken
+Nottingham_21C_S38,-0.457069985908325,0.176190225538894,0.440542162637392,21,Nottingham_21C_S38,21C,C,Turmeric 6 months,6_months,Treatment,Taken
+Nottingham_22A_S39,0.530040807888489,-0.277372992226188,-0.0784970082604453,22,Nottingham_22A_S39,22A,A,Turmeric 6 months,Baseline,Treatment,Not taken
+Nottingham_22B_S40,0.533994370674599,-0.165992281443368,-0.105267636425095,22,Nottingham_22B_S40,22B,B,Turmeric 6 months,2_weeks,Treatment,Not taken
+Nottingham_22C_S41,0.640705049448431,-0.424292788590276,-0.325652694454422,22,Nottingham_22C_S41,22C,C,Turmeric 6 months,6_months,Treatment,Taken
+Nottingham_23a_S42,0.370524557144418,-0.0807627590195306,-0.178985314536052,23,Nottingham_23a_S42,23a,A,Baseline sample only,Baseline,Control,Not taken
+Nottingham_3A_S1,-0.835670863724382,-0.554073452998017,0.272097102707989,3,Nottingham_3A_S1,3A,A,Didn't take turmeric,Baseline,Control,Not taken
+Nottingham_3B_S2,-0.982182369182396,-0.348972215478591,0.0352128608290756,3,Nottingham_3B_S2,3B,B,Didn't take turmeric,2_weeks,Control,Not taken
+Nottingham_3c_S3,-0.901940202043609,-0.334221746096585,0.130079031025678,3,Nottingham_3c_S3,3c,C,Didn't take turmeric,6_months,Control,Not taken
+Nottingham_4a_S4,-0.390619173001332,0.306700683967765,-0.544492528192361,4,Nottingham_4a_S4,4a,A,Turmeric 6 months,Baseline,Treatment,Not taken
+Nottingham_4b_S5,-0.398611259214791,0.12536714672773,-0.476094336241238,4,Nottingham_4b_S5,4b,B,Turmeric 6 months,2_weeks,Treatment,Not taken
+Nottingham_4c_S6,0.0403778390726997,-0.343518613733181,-0.227614686996073,4,Nottingham_4c_S6,4c,C,Turmeric 6 months,6_months,Treatment,Taken
+Nottingham_5A_S7,-0.364823731481836,-0.202285161799031,0.132186227394877,5,Nottingham_5A_S7,5A,A,Turmeric 6 months,Baseline,Treatment,Not taken
+Nottingham_5B_S8,-0.0451374869219741,-0.198846511001685,0.290035565105284,5,Nottingham_5B_S8,5B,B,Turmeric 6 months,2_weeks,Treatment,Not taken
+Nottingham_5C_S9,0.208449858419032,-0.421473362777178,-0.0750300253328086,5,Nottingham_5C_S9,5C,C,Turmeric 6 months,6_months,Treatment,Taken
+Nottingham_6A_S10,0.0459874037754559,0.30601499230039,0.233603138968955,6,Nottingham_6A_S10,6A,A,Didn't take turmeric,Baseline,Control,Not taken
+Nottingham_6B_S11,0.219638389662962,0.250107041462765,0.220354257201943,6,Nottingham_6B_S11,6B,B,Didn't take turmeric,2_weeks,Control,Not taken
+Nottingham_6C_S12,-0.336635586177436,0.630631017004304,0.358338673300173,6,Nottingham_6C_S12,6C,C,Didn't take turmeric,6_months,Control,Not taken
+Nottingham_7A_S13,0.23909202885742,0.131027265361744,0.612217730858252,7,Nottingham_7A_S13,7A,A,Turmeric 6 months,Baseline,Treatment,Not taken
+Nottingham_7B_S14,0.40172063325399,0.115702164969092,0.41402193099779,7,Nottingham_7B_S14,7B,B,Turmeric 6 months,2_weeks,Treatment,Not taken
+Nottingham_7C_S15,0.615579203864761,-0.183027645186799,0.117738240474586,7,Nottingham_7C_S15,7C,C,Turmeric 6 months,6_months,Treatment,Taken
+Nottingham_9A_S16,0.143609845923593,-0.155981257328228,0.253686272790334,9,Nottingham_9A_S16,9A,A,Turmeric 6 months,Baseline,Treatment,Not taken
+Nottingham_9B_S17,0.0156485256551854,-0.448553711496149,0.0283491594833027,9,Nottingham_9B_S17,9B,B,Turmeric 6 months,2_weeks,Treatment,Not taken
+Nottingham_9C_S18,0.0546050563470993,-0.220305689299552,0.492204990583668,9,Nottingham_9C_S18,9C,C,Turmeric 6 months,6_months,Treatment,Taken
