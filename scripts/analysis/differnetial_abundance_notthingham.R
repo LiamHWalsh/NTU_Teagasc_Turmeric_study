@@ -66,15 +66,18 @@ figure_output_alpha <- file.path(figure_paths$statistics, "alpha_diversity")
 input_path_taxonomic <- pipeline_paths$taxonomic
 input_path_functional <- pipeline_paths$functional
 
-token <- "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"
-Sys.setenv(GITHUB_PAT = token)
-
+token <- Sys.getenv("GITHUB_PAT")
 if (token == "") token <- Sys.getenv("GITHUB_TOKEN")
-if (token == "") {
-  stop("❌ GitHub token not found. Please set GITHUB_PAT environment variable.")
+enable_github_upload <- identical(Sys.getenv("ENABLE_GITHUB_UPLOAD"), "1")
+allow_github_write <- nzchar(token) && enable_github_upload
+if (nzchar(token)) {
+  message(glue::glue("GitHub token detected (length: {nchar(token)} characters)"))
+} else {
+  message("No GitHub token detected. Running in read-only / local-first mode.")
 }
-
-message(glue::glue("✅ GitHub token found (length: {nchar(token)} characters)"))
+if (!allow_github_write) {
+  message("GitHub upload disabled. Set ENABLE_GITHUB_UPLOAD=1 with a valid token to upload outputs.")
+}
 message(glue::glue("📥 Input path (taxonomic): {input_path_taxonomic}"))
 message(glue::glue("📥 Input path (functional): {input_path_functional}"))
 message(glue::glue("📤 Output path (differential abundance): {output_path_diff}"))
@@ -85,7 +88,11 @@ message(glue::glue("📊 Output path (figures): {figure_output_diff}"))
 # ────────────────────────────────────────────────────────────────────────────────
 
 load_github_file <- function(file_url, token) {
-  response <- GET(file_url, authenticate(token, ""))
+  response <- if (nzchar(token)) {
+    GET(file_url, authenticate(token, ""))
+  } else {
+    GET(file_url)
+  }
   if (status_code(response) != 200) {
     stop(glue::glue("Failed to load file: {file_url}"))
   }
@@ -111,6 +118,17 @@ save_and_upload_to_github <- function(object = NULL, object_type = c("data", "pl
     ggplot2::ggsave(local_path, plot = object, width = 12, height = 8, dpi = 300)
   } else if (object_type == "file") {
     if (!file.exists(local_path)) stop(glue::glue("❌ File does not exist: {local_path}"))
+  }
+  
+  if (!allow_github_write) {
+    local_output_path <- normalizePath(github_path, winslash = "/", mustWork = FALSE)
+    dir.create(dirname(local_output_path), recursive = TRUE, showWarnings = FALSE)
+    if (normalizePath(local_path, winslash = "/", mustWork = FALSE) != local_output_path) {
+      file.copy(local_path, local_output_path, overwrite = TRUE)
+      if (object_type %in% c("data", "plot")) unlink(local_path)
+    }
+    message(glue::glue("Saved locally to: {local_output_path}"))
+    return(invisible(local_output_path))
   }
   
   encoded_content <- base64enc::base64encode(local_path)

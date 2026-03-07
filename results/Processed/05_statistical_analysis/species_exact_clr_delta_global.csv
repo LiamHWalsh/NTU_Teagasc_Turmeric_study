@@ -1,0 +1,2 @@
+profile,n_pairs,n_treatment,n_control,pseudoF,R2,p_exact,n_permutations
+Species,11,8,3,0.993245258197996,0.0993916623214249,0.472727272727273,165

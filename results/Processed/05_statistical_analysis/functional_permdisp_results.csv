@@ -1,0 +1,5 @@
+Df,Sum Sq,Mean Sq,F,N.Perm,Pr(>F),term,grouping,profile
+1,0.00759468301995074,0.00759468301995074,4564.80308570897,9999,1e-04,Groups,turmeric_status,Functional
+38,6.32224324553323e-05,1.66374822250875e-06,,,,Residuals,turmeric_status,Functional
+2,0.00066823571327317,0.000334117856636585,187.606775064882,9999,1e-04,Groups,timepoint,Functional
+37,6.58950653102921e-05,1.78094771108898e-06,,,,Residuals,timepoint,Functional

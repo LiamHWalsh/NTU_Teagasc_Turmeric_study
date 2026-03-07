@@ -1,10 +1,67 @@
 .Rhistory
 .RData
-.Rproj.user
+.Rproj.user/
+.Renviron
+.env
+.env.*
+*.local
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Office / manuscript scratch
+~$*.docx
+~$*.xlsx
+officer_output/
+plots/
+My EndNote Library - Notthingham.Data/
+My EndNote Library - Notthingham.enl
+Uploading FASTQ Files to ENA FTP Server - notes.docx
+Notthingham_tumeric_study_report.docx
+Notthingham_tumeric_study_report.pdf
+Notthingham_tumeric_study_report_v4_6_improved_references_fixed.docx
+docx_v4_3_change_map_v6.md
+gps_injury_microbiome_association_methods_results.md
+manuscript_revision_v5_exploratory_sections.md
+scripts/docx_v4_3_change_map_v6.md
+scripts/gps_injury_microbiome_association_methods_results.md
+scripts/manuscript_revision_v5_exploratory_sections.md
+results/Processed/06_reports/*.docx
+results/Processed/06_reports/~$*.docx
+results/Processed/06_reports/_tmp_*.txt
+
+# Keep analysis data and figures visible in Git, but ignore raw local data staging
 data/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-results/*
+!data/.gitkeep
+!data/**/.gitkeep
+
+results/01_preprocessing/
+results/02_assembly/
+results/04_short_read_taxonomic_profiling/maaslin3_results/
+results/05_short_read_functional_profiling/maaslin3_results/
+results/05_short_read_functional_profiling/merged_genefamilies_cpm.tsv
+scripts/__pycache__/
+
+# Keep generated analysis outputs available
 !results/.gitkeep
-figures/*
+!results/Processed/
+!results/Processed/**
+!results/Raw/
+!results/Raw/**
+!results/Reports/
+!results/Reports/**
+
+# Keep manuscript-facing figures available
 !figures/.gitkeep
+!figures/05_statistical_analysis/
+!figures/05_statistical_analysis/**
+!figures/manuscript_figures/
+!figures/manuscript_figures/**
+!figures/supplementary/
+!figures/supplementary/**
+
+# Keep report markdowns, but ignore local Word artifacts
+results/Processed/06_reports/*.docx
+results/Processed/06_reports/~$*.docx
+results/Processed/06_reports/_tmp_*.txt

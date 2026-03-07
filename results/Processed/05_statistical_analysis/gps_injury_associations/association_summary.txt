@@ -1,0 +1,563 @@
+# GPS/Injury vs Microbiome Association Summary
+
+Analysis date: 2026-03-07
+GPS workbook: C:/Users/LiamWalsh/Downloads/OneDrive_1_3-1-2026/GPS and injury data_23_10.xlsx
+Analysis cohort (aligned with microbiome treatment/control pipeline): n = 11 participants
+
+## Predictors tested
+- pre_training_total
+- pre_training_min_week
+- pre_match_total
+- pre_match_min_week
+- post_training_total
+- post_training_min_week
+- post_match_total
+- post_match_min_week
+- delta_training_total
+- delta_training_min_week
+- delta_match_total
+- delta_match_min_week
+- injury_days_post
+- illness_days_post
+- injury_days_total
+- illness_days_total
+- injury_pct_post
+- illness_pct_post
+
+## Alpha-diversity outcomes
+- Outcomes: Richness, Shannon, Simpson
+- Tests run: 54
+- Nominal p < 0.05: 5
+- BH q < 0.10: 0
+- Adjusted (partial Spearman controlling for turmeric_group): p < 0.05 = 5, q < 0.10 = 0
+- Bayesian rank-regression (unadjusted): posterior direction >= 0.95 = 13, BH q_tail < 0.10 = 0
+- Bayesian rank-regression (adjusted for turmeric_group): posterior direction >= 0.95 = 7, BH q_tail < 0.10 = 0
+
+## Signal outcomes (all retained strain/genus/pathway features from 4e)
+- Strains: 29 | Genera: 5 | Pathways: 339
+- Tests run: 6714
+- Nominal p < 0.05: 495
+- BH q < 0.10: 2
+- Adjusted (partial Spearman controlling for turmeric_group): p < 0.05 = 576, q < 0.10 = 2
+- Bayesian rank-regression (unadjusted): posterior direction >= 0.95 = 1143, BH q_tail < 0.10 = 2
+- Bayesian rank-regression (adjusted for turmeric_group): posterior direction >= 0.95 = 1220, BH q_tail < 0.10 = 2
+
+## Top alpha associations (by p-value)
+# A tibble: 20 × 9
+   family level           outcome  predictor                  n    rho p_value
+   <chr>  <chr>           <chr>    <chr>                  <int>  <dbl>   <dbl>
+ 1 alpha  alpha_diversity Richness injury_days_total         11  0.761 0.00655
+ 2 alpha  alpha_diversity Shannon  injury_days_total         11  0.679 0.0216 
+ 3 alpha  alpha_diversity Simpson  injury_days_total         11  0.665 0.0255 
+ 4 alpha  alpha_diversity Richness injury_days_post          11  0.661 0.0269 
+ 5 alpha  alpha_diversity Richness injury_pct_post           11  0.661 0.0269 
+ 6 alpha  alpha_diversity Shannon  injury_days_post          11  0.523 0.0988 
+ 7 alpha  alpha_diversity Shannon  injury_pct_post           11  0.523 0.0988 
+ 8 alpha  alpha_diversity Richness pre_match_total           11  0.509 0.110  
+ 9 alpha  alpha_diversity Richness pre_match_min_week        11  0.509 0.110  
+10 alpha  alpha_diversity Simpson  injury_days_post          11  0.505 0.113  
+11 alpha  alpha_diversity Simpson  injury_pct_post           11  0.505 0.113  
+12 alpha  alpha_diversity Richness post_training_total       11 -0.487 0.128  
+13 alpha  alpha_diversity Richness post_training_min_week    11 -0.487 0.128  
+14 alpha  alpha_diversity Shannon  post_training_total       11 -0.401 0.222  
+15 alpha  alpha_diversity Shannon  post_training_min_week    11 -0.401 0.222  
+16 alpha  alpha_diversity Richness delta_match_min_week      11 -0.4   0.223  
+17 alpha  alpha_diversity Simpson  post_training_total       11 -0.346 0.297  
+18 alpha  alpha_diversity Simpson  post_training_min_week    11 -0.346 0.297  
+19 alpha  alpha_diversity Simpson  pre_training_total        11 -0.255 0.450  
+20 alpha  alpha_diversity Simpson  pre_training_min_week     11 -0.255 0.450  
+   q_value_bh abs_rho
+        <dbl>   <dbl>
+ 1      0.291   0.761
+ 2      0.291   0.679
+ 3      0.291   0.665
+ 4      0.291   0.661
+ 5      0.291   0.661
+ 6      0.533   0.523
+ 7      0.533   0.523
+ 8      0.533   0.509
+ 9      0.533   0.509
+10      0.533   0.505
+11      0.533   0.505
+12      0.533   0.487
+13      0.533   0.487
+14      0.752   0.401
+15      0.752   0.401
+16      0.752   0.4  
+17      0.854   0.346
+18      0.854   0.346
+19      0.854   0.255
+20      0.854   0.255
+
+## Top alpha associations adjusted for turmeric_group (partial Spearman)
+# A tibble: 20 × 9
+   family level           outcome  predictor                  n    rho p_value
+   <chr>  <chr>           <chr>    <chr>                  <int>  <dbl>   <dbl>
+ 1 alpha  alpha_diversity Richness injury_days_total         11  0.751 0.00778
+ 2 alpha  alpha_diversity Richness injury_days_post          11  0.644 0.0324 
+ 3 alpha  alpha_diversity Richness injury_pct_post           11  0.644 0.0324 
+ 4 alpha  alpha_diversity Shannon  injury_days_total         11  0.641 0.0335 
+ 5 alpha  alpha_diversity Simpson  injury_days_total         11  0.625 0.0397 
+ 6 alpha  alpha_diversity Richness post_training_total       11 -0.504 0.114  
+ 7 alpha  alpha_diversity Richness post_training_min_week    11 -0.504 0.114  
+ 8 alpha  alpha_diversity Richness pre_match_total           11  0.480 0.135  
+ 9 alpha  alpha_diversity Richness pre_match_min_week        11  0.480 0.135  
+10 alpha  alpha_diversity Shannon  post_training_total       11 -0.466 0.149  
+11 alpha  alpha_diversity Shannon  post_training_min_week    11 -0.466 0.149  
+12 alpha  alpha_diversity Shannon  injury_days_post          11  0.446 0.170  
+13 alpha  alpha_diversity Shannon  injury_pct_post           11  0.446 0.170  
+14 alpha  alpha_diversity Simpson  injury_days_post          11  0.424 0.194  
+15 alpha  alpha_diversity Simpson  injury_pct_post           11  0.424 0.194  
+16 alpha  alpha_diversity Simpson  post_training_total       11 -0.405 0.217  
+17 alpha  alpha_diversity Simpson  post_training_min_week    11 -0.405 0.217  
+18 alpha  alpha_diversity Richness delta_match_min_week      11 -0.359 0.278  
+19 alpha  alpha_diversity Simpson  pre_training_total        11 -0.354 0.286  
+20 alpha  alpha_diversity Simpson  pre_training_min_week     11 -0.354 0.286  
+   q_value_bh abs_rho
+        <dbl>   <dbl>
+ 1      0.420   0.751
+ 2      0.429   0.644
+ 3      0.429   0.644
+ 4      0.429   0.641
+ 5      0.429   0.625
+ 6      0.689   0.504
+ 7      0.689   0.504
+ 8      0.689   0.480
+ 9      0.689   0.480
+10      0.689   0.466
+11      0.689   0.466
+12      0.689   0.446
+13      0.689   0.446
+14      0.689   0.424
+15      0.689   0.424
+16      0.689   0.405
+17      0.689   0.405
+18      0.772   0.359
+19      0.772   0.354
+20      0.772   0.354
+
+## Top signal associations (by p-value)
+# A tibble: 30 × 9
+   family  level   outcome                                                      
+   <chr>   <chr>   <chr>                                                        
+ 1 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 2 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 3 signals pathway pathway_ARGININE-SYN4-PWY: L-ornithine biosynthesis II       
+ 4 signals strain  strain_SGB2328                                               
+ 5 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 6 signals pathway pathway_ARO-PWY: chorismate biosynthesis I                   
+ 7 signals pathway pathway_PWY-6163: chorismate biosynthesis from 3-dehydroquin…
+ 8 signals strain  strain_SGB4826                                               
+ 9 signals strain  strain_SGB4826                                               
+10 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+11 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+12 signals strain  strain_SGB1949                                               
+13 signals pathway pathway_PWY-6507: 4-deoxy-L-threo-hex-4-enopyranuronate degr…
+14 signals pathway pathway_PWY-6507: 4-deoxy-L-threo-hex-4-enopyranuronate degr…
+15 signals pathway pathway_PWY-6906: chitin derivatives degradation             
+16 signals pathway pathway_GALACTUROCAT-PWY: D-galacturonate degradation I      
+17 signals pathway pathway_GALACTUROCAT-PWY: D-galacturonate degradation I      
+18 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+19 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+20 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+21 signals pathway pathway_PYRIDNUCSYN-PWY: NAD de novo biosynthesis I (from as…
+22 signals pathway pathway_ARO-PWY: chorismate biosynthesis I                   
+23 signals pathway pathway_ARO-PWY: chorismate biosynthesis I                   
+24 signals pathway pathway_HEME-BIOSYNTHESIS-II: heme b biosynthesis I (aerobic)
+25 signals pathway pathway_HEME-BIOSYNTHESIS-II: heme b biosynthesis I (aerobic)
+26 signals pathway pathway_PWY-6163: chorismate biosynthesis from 3-dehydroquin…
+27 signals pathway pathway_PWY-6163: chorismate biosynthesis from 3-dehydroquin…
+28 signals pathway pathway_PWY-7204: pyridoxal 5'-phosphate salvage II (plants) 
+29 signals pathway pathway_GALACT-GLUCUROCAT-PWY: superpathway of hexuronide an…
+30 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+   predictor                   n    rho      p_value q_value_bh abs_rho
+   <chr>                   <int>  <dbl>        <dbl>      <dbl>   <dbl>
+ 1 pre_training_total         11 -0.982 0.0000000840   0.000282   0.982
+ 2 pre_training_min_week      11 -0.982 0.0000000840   0.000282   0.982
+ 3 injury_days_total          11  0.879 0.000362       0.421      0.879
+ 4 delta_match_total          11 -0.877 0.000390       0.421      0.877
+ 5 delta_training_min_week    11  0.873 0.000455       0.421      0.873
+ 6 injury_days_total          11 -0.866 0.000575       0.421      0.866
+ 7 injury_days_total          11 -0.866 0.000575       0.421      0.866
+ 8 pre_match_total            11 -0.864 0.000612       0.421      0.864
+ 9 pre_match_min_week         11 -0.864 0.000612       0.421      0.864
+10 injury_days_post           11  0.860 0.000689       0.421      0.860
+11 injury_pct_post            11  0.860 0.000689       0.421      0.860
+12 injury_days_total          11  0.851 0.000905       0.471      0.851
+13 pre_training_total         11  0.845 0.00105        0.471      0.845
+14 pre_training_min_week      11  0.845 0.00105        0.471      0.845
+15 injury_days_total          11  0.843 0.00112        0.471      0.843
+16 pre_training_total         11  0.836 0.00133        0.471      0.836
+17 pre_training_min_week      11  0.836 0.00133        0.471      0.836
+18 pre_training_total         11  0.836 0.00133        0.471      0.836
+19 pre_training_min_week      11  0.836 0.00133        0.471      0.836
+20 injury_days_total          11  0.831 0.00153        0.499      0.831
+21 delta_training_min_week    11  0.827 0.00168        0.499      0.827
+22 injury_days_post           11 -0.817 0.00216        0.499      0.817
+23 injury_pct_post            11 -0.817 0.00216        0.499      0.817
+24 injury_days_post           11  0.817 0.00216        0.499      0.817
+25 injury_pct_post            11  0.817 0.00216        0.499      0.817
+26 injury_days_post           11 -0.817 0.00216        0.499      0.817
+27 injury_pct_post            11 -0.817 0.00216        0.499      0.817
+28 delta_match_min_week       11 -0.813 0.00235        0.499      0.813
+29 delta_match_min_week       11 -0.809 0.00256        0.499      0.809
+30 delta_training_min_week    11 -0.809 0.00256        0.499      0.809
+
+## Top signal associations adjusted for turmeric_group (partial Spearman)
+# A tibble: 30 × 9
+   family  level   outcome                                                      
+   <chr>   <chr>   <chr>                                                        
+ 1 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 2 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 3 signals strain  strain_SGB2328                                               
+ 4 signals pathway pathway_PWY0-1296: purine ribonucleosides degradation        
+ 5 signals pathway pathway_PWY0-1296: purine ribonucleosides degradation        
+ 6 signals pathway pathway_PWY-6607: guanosine nucleotides degradation I        
+ 7 signals pathway pathway_PWY-6607: guanosine nucleotides degradation I        
+ 8 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 9 signals pathway pathway_ARGININE-SYN4-PWY: L-ornithine biosynthesis II       
+10 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+11 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+12 signals pathway pathway_ARO-PWY: chorismate biosynthesis I                   
+13 signals pathway pathway_PWY-6163: chorismate biosynthesis from 3-dehydroquin…
+14 signals strain  strain_SGB4826                                               
+15 signals strain  strain_SGB4826                                               
+16 signals pathway pathway_PWY-6507: 4-deoxy-L-threo-hex-4-enopyranuronate degr…
+17 signals pathway pathway_PWY-6507: 4-deoxy-L-threo-hex-4-enopyranuronate degr…
+18 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+19 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+20 signals pathway pathway_PYRIDNUCSYN-PWY: NAD de novo biosynthesis I (from as…
+21 signals pathway pathway_PWY-7688: dTDP-&alpha;-D-ravidosamine and dTDP-4-ace…
+22 signals pathway pathway_PWY-7688: dTDP-&alpha;-D-ravidosamine and dTDP-4-ace…
+23 signals pathway pathway_GLUCONEO-PWY: gluconeogenesis I                      
+24 signals pathway pathway_DTDPRHAMSYN-PWY: dTDP-&beta;-L-rhamnose biosynthesis 
+25 signals strain  strain_SGB1949                                               
+26 signals pathway pathway_GALACTUROCAT-PWY: D-galacturonate degradation I      
+27 signals pathway pathway_GALACTUROCAT-PWY: D-galacturonate degradation I      
+28 signals pathway pathway_PWY0-1296: purine ribonucleosides degradation        
+29 signals pathway pathway_PWY-6906: chitin derivatives degradation             
+30 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+   predictor                   n    rho      p_value q_value_bh abs_rho
+   <chr>                   <int>  <dbl>        <dbl>      <dbl>   <dbl>
+ 1 pre_training_total         11 -0.982 0.0000000906   0.000304   0.982
+ 2 pre_training_min_week      11 -0.982 0.0000000906   0.000304   0.982
+ 3 delta_match_total          11 -0.910 0.000100       0.145      0.910
+ 4 pre_training_total         11  0.909 0.000108       0.145      0.909
+ 5 pre_training_min_week      11  0.909 0.000108       0.145      0.909
+ 6 post_match_total           11 -0.878 0.000382       0.317      0.878
+ 7 post_match_min_week        11 -0.878 0.000382       0.317      0.878
+ 8 delta_training_min_week    11  0.871 0.000489       0.317      0.871
+ 9 injury_days_total          11  0.867 0.000544       0.317      0.867
+10 pre_training_total         11  0.854 0.000829       0.317      0.854
+11 pre_training_min_week      11  0.854 0.000829       0.317      0.854
+12 injury_days_total          11 -0.852 0.000864       0.317      0.852
+13 injury_days_total          11 -0.852 0.000864       0.317      0.852
+14 pre_match_total            11 -0.846 0.00102        0.317      0.846
+15 pre_match_min_week         11 -0.846 0.00102        0.317      0.846
+16 pre_training_total         11  0.846 0.00103        0.317      0.846
+17 pre_training_min_week      11  0.846 0.00103        0.317      0.846
+18 injury_days_post           11  0.845 0.00106        0.317      0.845
+19 injury_pct_post            11  0.845 0.00106        0.317      0.845
+20 delta_training_min_week    11  0.844 0.00108        0.317      0.844
+21 post_training_total        11 -0.842 0.00114        0.317      0.842
+22 post_training_min_week     11 -0.842 0.00114        0.317      0.842
+23 delta_training_min_week    11  0.841 0.00117        0.317      0.841
+24 delta_training_min_week    11  0.841 0.00119        0.317      0.841
+25 injury_days_total          11  0.839 0.00125        0.317      0.839
+26 pre_training_total         11  0.837 0.00132        0.317      0.837
+27 pre_training_min_week      11  0.837 0.00132        0.317      0.837
+28 delta_training_min_week    11 -0.837 0.00132        0.317      0.837
+29 injury_days_total          11  0.827 0.00169        0.387      0.827
+30 delta_training_min_week    11 -0.826 0.00173        0.387      0.826
+
+## Top alpha Bayesian rank-regression associations (by posterior tail probability)
+# A tibble: 20 × 14
+   family level           outcome  predictor         n beta_rank  ci_low ci_high
+   <chr>  <chr>           <chr>    <chr>         <int>     <dbl>   <dbl>   <dbl>
+ 1 alpha  alpha_diversity Richness injury_days_…    11     0.760  0.306   1.21  
+ 2 alpha  alpha_diversity Shannon  injury_days_…    11     0.678  0.175   1.18  
+ 3 alpha  alpha_diversity Simpson  injury_days_…    11     0.664  0.155   1.17  
+ 4 alpha  alpha_diversity Richness injury_days_…    11     0.660  0.148   1.17  
+ 5 alpha  alpha_diversity Richness injury_pct_p…    11     0.660  0.148   1.17  
+ 6 alpha  alpha_diversity Shannon  injury_days_…    11     0.522 -0.0492  1.09  
+ 7 alpha  alpha_diversity Shannon  injury_pct_p…    11     0.522 -0.0492  1.09  
+ 8 alpha  alpha_diversity Richness pre_match_to…    11     0.509 -0.0680  1.09  
+ 9 alpha  alpha_diversity Richness pre_match_mi…    11     0.509 -0.0680  1.09  
+10 alpha  alpha_diversity Simpson  injury_days_…    11     0.504 -0.0740  1.08  
+11 alpha  alpha_diversity Simpson  injury_pct_p…    11     0.504 -0.0740  1.08  
+12 alpha  alpha_diversity Richness post_trainin…    11    -0.487 -1.07    0.0969
+13 alpha  alpha_diversity Richness post_trainin…    11    -0.487 -1.07    0.0969
+14 alpha  alpha_diversity Shannon  post_trainin…    11    -0.401 -1.01    0.209 
+15 alpha  alpha_diversity Shannon  post_trainin…    11    -0.401 -1.01    0.209 
+16 alpha  alpha_diversity Richness delta_match_…    11    -0.400 -1.01    0.210 
+17 alpha  alpha_diversity Simpson  post_trainin…    11    -0.346 -0.968   0.277 
+18 alpha  alpha_diversity Simpson  post_trainin…    11    -0.346 -0.968   0.277 
+19 alpha  alpha_diversity Simpson  pre_training…    11    -0.254 -0.894   0.385 
+20 alpha  alpha_diversity Simpson  pre_training…    11    -0.254 -0.894   0.385 
+   p_beta_gt0 p_beta_lt0 p_direction p_tail_two_sided q_tail_bh abs_beta_rank
+        <dbl>      <dbl>       <dbl>            <dbl>     <dbl>         <dbl>
+ 1     0.998     0.00167       0.998          0.00334     0.171         0.760
+ 2     0.994     0.00620       0.994          0.0124      0.171         0.678
+ 3     0.993     0.00746       0.993          0.0149      0.171         0.664
+ 4     0.992     0.00792       0.992          0.0158      0.171         0.660
+ 5     0.992     0.00792       0.992          0.0158      0.171         0.660
+ 6     0.965     0.0349        0.965          0.0697      0.391         0.522
+ 7     0.965     0.0349        0.965          0.0697      0.391         0.522
+ 8     0.961     0.0393        0.961          0.0787      0.391         0.509
+ 9     0.961     0.0393        0.961          0.0787      0.391         0.509
+10     0.959     0.0409        0.959          0.0817      0.391         0.504
+11     0.959     0.0409        0.959          0.0817      0.391         0.504
+12     0.0471    0.953         0.953          0.0942      0.391         0.487
+13     0.0471    0.953         0.953          0.0942      0.391         0.487
+14     0.0888    0.911         0.911          0.178       0.603         0.401
+15     0.0888    0.911         0.911          0.178       0.603         0.401
+16     0.0894    0.911         0.911          0.179       0.603         0.400
+17     0.125     0.875         0.875          0.249       0.748         0.346
+18     0.125     0.875         0.875          0.249       0.748         0.346
+19     0.202     0.798         0.798          0.403       0.830         0.254
+20     0.202     0.798         0.798          0.403       0.830         0.254
+
+## Top alpha Bayesian rank-regression associations adjusted for turmeric_group
+# A tibble: 20 × 14
+   family level           outcome  predictor         n beta_rank  ci_low ci_high
+   <chr>  <chr>           <chr>    <chr>         <int>     <dbl>   <dbl>   <dbl>
+ 1 alpha  alpha_diversity Richness injury_days_…    11     0.769  0.295   1.24  
+ 2 alpha  alpha_diversity Richness injury_days_…    11     0.668  0.126   1.21  
+ 3 alpha  alpha_diversity Richness injury_pct_p…    11     0.668  0.126   1.21  
+ 4 alpha  alpha_diversity Shannon  injury_days_…    11     0.598  0.102   1.09  
+ 5 alpha  alpha_diversity Simpson  injury_days_…    11     0.583  0.0803  1.09  
+ 6 alpha  alpha_diversity Richness post_trainin…    11    -0.494 -1.06    0.0755
+ 7 alpha  alpha_diversity Richness post_trainin…    11    -0.494 -1.06    0.0755
+ 8 alpha  alpha_diversity Richness pre_match_to…    11     0.510 -0.115   1.13  
+ 9 alpha  alpha_diversity Richness pre_match_mi…    11     0.510 -0.115   1.13  
+10 alpha  alpha_diversity Shannon  post_trainin…    11    -0.415 -0.951   0.120 
+11 alpha  alpha_diversity Shannon  post_trainin…    11    -0.415 -0.951   0.120 
+12 alpha  alpha_diversity Shannon  injury_days_…    11     0.421 -0.151   0.992 
+13 alpha  alpha_diversity Shannon  injury_pct_p…    11     0.421 -0.151   0.992 
+14 alpha  alpha_diversity Simpson  injury_days_…    11     0.400 -0.177   0.977 
+15 alpha  alpha_diversity Simpson  injury_pct_p…    11     0.400 -0.177   0.977 
+16 alpha  alpha_diversity Simpson  post_trainin…    11    -0.361 -0.912   0.190 
+17 alpha  alpha_diversity Simpson  post_trainin…    11    -0.361 -0.912   0.190 
+18 alpha  alpha_diversity Richness delta_match_…    11    -0.382 -1.04    0.278 
+19 alpha  alpha_diversity Simpson  pre_training…    11    -0.317 -0.884   0.249 
+20 alpha  alpha_diversity Simpson  pre_training…    11    -0.317 -0.884   0.249 
+   p_beta_gt0 p_beta_lt0 p_direction p_tail_two_sided q_tail_bh abs_beta_rank
+        <dbl>      <dbl>       <dbl>            <dbl>     <dbl>         <dbl>
+ 1     0.998     0.00206       0.998          0.00412     0.223         0.769
+ 2     0.990     0.00989       0.990          0.0198      0.287         0.668
+ 3     0.990     0.00989       0.990          0.0198      0.287         0.668
+ 4     0.989     0.0110        0.989          0.0221      0.287         0.598
+ 5     0.987     0.0133        0.987          0.0266      0.287         0.583
+ 6     0.0416    0.958         0.958          0.0832      0.559         0.494
+ 7     0.0416    0.958         0.958          0.0832      0.559         0.494
+ 8     0.950     0.0503        0.950          0.101       0.559         0.510
+ 9     0.950     0.0503        0.950          0.101       0.559         0.510
+10     0.0584    0.942         0.942          0.117       0.559         0.415
+11     0.0584    0.942         0.942          0.117       0.559         0.415
+12     0.933     0.0673        0.933          0.135       0.559         0.421
+13     0.933     0.0673        0.933          0.135       0.559         0.421
+14     0.922     0.0783        0.922          0.157       0.564         0.400
+15     0.922     0.0783        0.922          0.157       0.564         0.400
+16     0.0896    0.910         0.910          0.179       0.569         0.361
+17     0.0896    0.910         0.910          0.179       0.569         0.361
+18     0.116     0.884         0.884          0.231       0.663         0.382
+19     0.123     0.877         0.877          0.245       0.663         0.317
+20     0.123     0.877         0.877          0.245       0.663         0.317
+
+## Top signal Bayesian rank-regression associations (by posterior tail probability)
+# A tibble: 30 × 14
+   family  level   outcome                                                      
+   <chr>   <chr>   <chr>                                                        
+ 1 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 2 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 3 signals pathway pathway_ARGININE-SYN4-PWY: L-ornithine biosynthesis II       
+ 4 signals strain  strain_SGB2328                                               
+ 5 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 6 signals pathway pathway_ARO-PWY: chorismate biosynthesis I                   
+ 7 signals pathway pathway_PWY-6163: chorismate biosynthesis from 3-dehydroquin…
+ 8 signals strain  strain_SGB4826                                               
+ 9 signals strain  strain_SGB4826                                               
+10 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+11 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+12 signals strain  strain_SGB1949                                               
+13 signals pathway pathway_PWY-6507: 4-deoxy-L-threo-hex-4-enopyranuronate degr…
+14 signals pathway pathway_PWY-6507: 4-deoxy-L-threo-hex-4-enopyranuronate degr…
+15 signals pathway pathway_PWY-6906: chitin derivatives degradation             
+16 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+17 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+18 signals pathway pathway_GALACTUROCAT-PWY: D-galacturonate degradation I      
+19 signals pathway pathway_GALACTUROCAT-PWY: D-galacturonate degradation I      
+20 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+21 signals pathway pathway_PYRIDNUCSYN-PWY: NAD de novo biosynthesis I (from as…
+22 signals pathway pathway_ARO-PWY: chorismate biosynthesis I                   
+23 signals pathway pathway_ARO-PWY: chorismate biosynthesis I                   
+24 signals pathway pathway_HEME-BIOSYNTHESIS-II: heme b biosynthesis I (aerobic)
+25 signals pathway pathway_HEME-BIOSYNTHESIS-II: heme b biosynthesis I (aerobic)
+26 signals pathway pathway_PWY-6163: chorismate biosynthesis from 3-dehydroquin…
+27 signals pathway pathway_PWY-6163: chorismate biosynthesis from 3-dehydroquin…
+28 signals pathway pathway_PWY-7204: pyridoxal 5'-phosphate salvage II (plants) 
+29 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+30 signals pathway pathway_GALACT-GLUCUROCAT-PWY: superpathway of hexuronide an…
+   predictor                   n beta_rank ci_low ci_high  p_beta_gt0 p_beta_lt0
+   <chr>                   <int>     <dbl>  <dbl>   <dbl>       <dbl>      <dbl>
+ 1 pre_training_total         11    -0.981 -1.21   -0.748 0.000000445  1.000    
+ 2 pre_training_min_week      11    -0.981 -1.21   -0.748 0.000000445  1.000    
+ 3 injury_days_total          11     0.878  0.519   1.24  1.000        0.0000914
+ 4 delta_match_total          11    -0.876 -1.24   -0.514 0.0000979    1.000    
+ 5 delta_training_min_week    11     0.872  0.506   1.24  1.000        0.000113 
+ 6 injury_days_total          11    -0.865 -1.24   -0.492 0.000141     1.000    
+ 7 injury_days_total          11    -0.865 -1.24   -0.492 0.000141     1.000    
+ 8 pre_match_total            11    -0.863 -1.24   -0.488 0.000150     1.000    
+ 9 pre_match_min_week         11    -0.863 -1.24   -0.488 0.000150     1.000    
+10 injury_days_post           11     0.859  0.481   1.24  1.000        0.000168 
+11 injury_pct_post            11     0.859  0.481   1.24  1.000        0.000168 
+12 injury_days_total          11     0.850  0.464   1.24  1.000        0.000219 
+13 pre_training_total         11     0.845  0.454   1.24  1.000        0.000252 
+14 pre_training_min_week      11     0.845  0.454   1.24  1.000        0.000252 
+15 injury_days_total          11     0.842  0.449   1.23  1.000        0.000270 
+16 pre_training_total         11     0.836  0.437   1.23  1.000        0.000321 
+17 pre_training_min_week      11     0.836  0.437   1.23  1.000        0.000321 
+18 pre_training_total         11     0.836  0.437   1.23  1.000        0.000321 
+19 pre_training_min_week      11     0.836  0.437   1.23  1.000        0.000321 
+20 injury_days_total          11     0.830  0.428   1.23  1.000        0.000367 
+21 delta_training_min_week    11     0.826  0.421   1.23  1.000        0.000404 
+22 injury_days_post           11    -0.816 -1.23   -0.402 0.000523     0.999    
+23 injury_pct_post            11    -0.816 -1.23   -0.402 0.000523     0.999    
+24 injury_days_post           11     0.816  0.402   1.23  0.999        0.000523 
+25 injury_pct_post            11     0.816  0.402   1.23  0.999        0.000523 
+26 injury_days_post           11    -0.816 -1.23   -0.402 0.000523     0.999    
+27 injury_pct_post            11    -0.816 -1.23   -0.402 0.000523     0.999    
+28 delta_match_min_week       11    -0.812 -1.23   -0.395 0.000570     0.999    
+29 delta_training_min_week    11    -0.808 -1.23   -0.388 0.000622     0.999    
+30 delta_match_min_week       11    -0.808 -1.23   -0.388 0.000622     0.999    
+   p_direction p_tail_two_sided q_tail_bh abs_beta_rank
+         <dbl>            <dbl>     <dbl>         <dbl>
+ 1       1.000      0.000000891   0.00299         0.981
+ 2       1.000      0.000000891   0.00299         0.981
+ 3       1.000      0.000183      0.205           0.878
+ 4       1.000      0.000196      0.205           0.876
+ 5       1.000      0.000226      0.205           0.872
+ 6       1.000      0.000282      0.205           0.865
+ 7       1.000      0.000282      0.205           0.865
+ 8       1.000      0.000299      0.205           0.863
+ 9       1.000      0.000299      0.205           0.863
+10       1.000      0.000336      0.205           0.859
+11       1.000      0.000336      0.205           0.859
+12       1.000      0.000437      0.227           0.850
+13       1.000      0.000504      0.227           0.845
+14       1.000      0.000504      0.227           0.845
+15       1.000      0.000541      0.227           0.842
+16       1.000      0.000641      0.227           0.836
+17       1.000      0.000641      0.227           0.836
+18       1.000      0.000641      0.227           0.836
+19       1.000      0.000641      0.227           0.836
+20       1.000      0.000735      0.247           0.830
+21       1.000      0.000808      0.258           0.826
+22       0.999      0.00105       0.260           0.816
+23       0.999      0.00105       0.260           0.816
+24       0.999      0.00105       0.260           0.816
+25       0.999      0.00105       0.260           0.816
+26       0.999      0.00105       0.260           0.816
+27       0.999      0.00105       0.260           0.816
+28       0.999      0.00114       0.261           0.812
+29       0.999      0.00124       0.261           0.808
+30       0.999      0.00124       0.261           0.808
+
+## Top signal Bayesian rank-regression associations adjusted for turmeric_group
+# A tibble: 30 × 14
+   family  level   outcome                                                      
+   <chr>   <chr>   <chr>                                                        
+ 1 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 2 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 3 signals strain  strain_SGB2328                                               
+ 4 signals pathway pathway_PWY0-1296: purine ribonucleosides degradation        
+ 5 signals pathway pathway_PWY0-1296: purine ribonucleosides degradation        
+ 6 signals pathway pathway_PWY-7328: superpathway of UDP-glucose-derived O-anti…
+ 7 signals pathway pathway_PWY-6607: guanosine nucleotides degradation I        
+ 8 signals pathway pathway_PWY-6607: guanosine nucleotides degradation I        
+ 9 signals pathway pathway_ARGININE-SYN4-PWY: L-ornithine biosynthesis II       
+10 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+11 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+12 signals pathway pathway_ARO-PWY: chorismate biosynthesis I                   
+13 signals pathway pathway_PWY-6163: chorismate biosynthesis from 3-dehydroquin…
+14 signals pathway pathway_PWY-6507: 4-deoxy-L-threo-hex-4-enopyranuronate degr…
+15 signals pathway pathway_PWY-6507: 4-deoxy-L-threo-hex-4-enopyranuronate degr…
+16 signals pathway pathway_PYRIDNUCSYN-PWY: NAD de novo biosynthesis I (from as…
+17 signals strain  strain_SGB4826                                               
+18 signals strain  strain_SGB4826                                               
+19 signals pathway pathway_GLUCONEO-PWY: gluconeogenesis I                      
+20 signals pathway pathway_GALACTUROCAT-PWY: D-galacturonate degradation I      
+21 signals pathway pathway_GALACTUROCAT-PWY: D-galacturonate degradation I      
+22 signals strain  strain_SGB1949                                               
+23 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+24 signals pathway pathway_PWY-5994: palmitate biosynthesis (type I fatty acid …
+25 signals pathway pathway_PWY0-1296: purine ribonucleosides degradation        
+26 signals pathway pathway_PWY-7242: D-fructuronate degradation                 
+27 signals pathway pathway_PWY-7688: dTDP-&alpha;-D-ravidosamine and dTDP-4-ace…
+28 signals pathway pathway_PWY-7688: dTDP-&alpha;-D-ravidosamine and dTDP-4-ace…
+29 signals pathway pathway_PWY-6906: chitin derivatives degradation             
+30 signals pathway pathway_PWY-6607: guanosine nucleotides degradation I        
+   predictor                   n beta_rank ci_low ci_high  p_beta_gt0 p_beta_lt0
+   <chr>                   <int>     <dbl>  <dbl>   <dbl>       <dbl>      <dbl>
+ 1 pre_training_total         11    -0.981 -1.22   -0.746 0.000000488  1.000    
+ 2 pre_training_min_week      11    -0.981 -1.22   -0.746 0.000000488  1.000    
+ 3 delta_match_total          11    -0.838 -1.15   -0.525 0.0000408    1.000    
+ 4 pre_training_total         11     0.816  0.504   1.13  1.000        0.0000491
+ 5 pre_training_min_week      11     0.816  0.504   1.13  1.000        0.0000491
+ 6 delta_training_min_week    11     0.870  0.501   1.24  1.000        0.000123 
+ 7 post_match_total           11    -0.836 -1.19   -0.480 0.000126     1.000    
+ 8 post_match_min_week        11    -0.836 -1.19   -0.480 0.000126     1.000    
+ 9 injury_days_total          11     0.857  0.484   1.23  1.000        0.000153 
+10 pre_training_total         11     0.858  0.472   1.24  1.000        0.000202 
+11 pre_training_min_week      11     0.858  0.472   1.24  1.000        0.000202 
+12 injury_days_total          11    -0.842 -1.23   -0.456 0.000236     1.000    
+13 injury_days_total          11    -0.842 -1.23   -0.456 0.000236     1.000    
+14 pre_training_total         11     0.850  0.458   1.24  1.000        0.000250 
+15 pre_training_min_week      11     0.850  0.458   1.24  1.000        0.000250 
+16 delta_training_min_week    11     0.849  0.455   1.24  1.000        0.000261 
+17 pre_match_total            11    -0.868 -1.27   -0.462 0.000276     1.000    
+18 pre_match_min_week         11    -0.868 -1.27   -0.462 0.000276     1.000    
+19 delta_training_min_week    11     0.819  0.431   1.21  1.000        0.000306 
+20 pre_training_total         11     0.841  0.441   1.24  1.000        0.000319 
+21 pre_training_min_week      11     0.841  0.441   1.24  1.000        0.000319 
+22 injury_days_total          11     0.846  0.442   1.25  1.000        0.000323 
+23 injury_days_post           11     0.796  0.416   1.18  1.000        0.000329 
+24 injury_pct_post            11     0.796  0.416   1.18  1.000        0.000329 
+25 delta_training_min_week    11    -0.751 -1.12   -0.381 0.000418     1.000    
+26 delta_training_min_week    11    -0.830 -1.24   -0.421 0.000419     1.000    
+27 post_training_total        11    -0.697 -1.04   -0.351 0.000438     1.000    
+28 post_training_min_week     11    -0.697 -1.04   -0.351 0.000438     1.000    
+29 injury_days_total          11     0.818  0.411   1.22  1.000        0.000451 
+30 pre_training_total         11    -0.761 -1.15   -0.371 0.000569     0.999    
+   p_direction p_tail_two_sided q_tail_bh abs_beta_rank
+         <dbl>            <dbl>     <dbl>         <dbl>
+ 1       1.000      0.000000976   0.00328         0.981
+ 2       1.000      0.000000976   0.00328         0.981
+ 3       1.000      0.0000815     0.132           0.838
+ 4       1.000      0.0000982     0.132           0.816
+ 5       1.000      0.0000982     0.132           0.816
+ 6       1.000      0.000247      0.184           0.870
+ 7       1.000      0.000252      0.184           0.836
+ 8       1.000      0.000252      0.184           0.836
+ 9       1.000      0.000307      0.184           0.857
+10       1.000      0.000405      0.184           0.858
+11       1.000      0.000405      0.184           0.858
+12       1.000      0.000472      0.184           0.842
+13       1.000      0.000472      0.184           0.842
+14       1.000      0.000499      0.184           0.850
+15       1.000      0.000499      0.184           0.850
+16       1.000      0.000522      0.184           0.849
+17       1.000      0.000551      0.184           0.868
+18       1.000      0.000551      0.184           0.868
+19       1.000      0.000612      0.184           0.819
+20       1.000      0.000638      0.184           0.841
+21       1.000      0.000638      0.184           0.841
+22       1.000      0.000646      0.184           0.846
+23       1.000      0.000658      0.184           0.796
+24       1.000      0.000658      0.184           0.796
+25       1.000      0.000835      0.209           0.751
+26       1.000      0.000838      0.209           0.830
+27       1.000      0.000876      0.209           0.697
+28       1.000      0.000876      0.209           0.697
+29       1.000      0.000901      0.209           0.818
+30       0.999      0.00114       0.217           0.761

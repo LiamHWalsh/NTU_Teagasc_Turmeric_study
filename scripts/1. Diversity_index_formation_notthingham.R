@@ -15,7 +15,16 @@
 # Section: Reproducibility
 # ────────────────────────────────────────────────────────────────────────────────
 # Set custom library path and seed
-.libPaths("G:/R/win-library/4.4")
+preferred_lib <- Sys.getenv("NTU_R_LIB")
+if (!nzchar(preferred_lib)) preferred_lib <- "G:/R/win-library/4.4"
+if (!dir.exists(preferred_lib)) {
+  preferred_lib <- normalizePath(
+    file.path(Sys.getenv("USERPROFILE"), "Documents", "R", "win-library", "4.4"),
+    winslash = "/", mustWork = FALSE
+  )
+}
+dir.create(preferred_lib, recursive = TRUE, showWarnings = FALSE)
+.libPaths(c(preferred_lib, .libPaths()))
 set.seed(123)
 # ────────────────────────────────────────────────────────────────────────────────
 # Section: Load Required Packages
@@ -29,8 +38,10 @@ pacman::p_load(gh, base64enc, readr, readxl, httr, glue, jsonlite, hillR, dplyr,
 owner <- "LiamHWalsh"
 repo <- "NTU_Teagasc_Turmeric_study"
 branch <- "main"
-token <- "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"  # Replace or use a .Renviron variable
-Sys.setenv(GITHUB_PAT = "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")
+token <- Sys.getenv("GITHUB_PAT")
+if (token == "") token <- Sys.getenv("GITHUB_TOKEN")
+enable_github_upload <- identical(Sys.getenv("ENABLE_GITHUB_UPLOAD"), "1")
+allow_github_write <- nzchar(token) && enable_github_upload
 # Define pipeline structure - each step's output becomes next step's input
 pipeline_paths <- list(
   # Step 0: Raw data (input for this script)
@@ -71,17 +82,15 @@ input_path <- pipeline_paths$raw_data
 output_path <- pipeline_paths$diversity  # This script outputs diversity analysis
 figure_output_path <- figure_paths$diversity  # Figures go here
 
-# Try multiple methods to get the token
-token <- Sys.getenv("GITHUB_PAT")
-if (token == "") token <- Sys.getenv("GITHUB_TOKEN")
-if (token == "") {
-  # If environment variables don't work, you can temporarily hardcode it here
-  # token <- "your_token_here"
-  stop("❌ GitHub token not found. Please set GITHUB_PAT environment variable or add token manually.")
+if (nzchar(token)) {
+  message(glue::glue("GitHub token detected (length: {nchar(token)} characters)"))
+} else {
+  message("No GitHub token detected. Running in read-only / local-first mode.")
 }
-
-message(glue::glue("✅ GitHub token found (length: {nchar(token)} characters)"))
-message(glue::glue("📥 Input path: {input_path}"))
+if (!allow_github_write) {
+  message("GitHub upload disabled. Set ENABLE_GITHUB_UPLOAD=1 with a valid token to upload outputs.")
+}
+message(glue::glue("Input path: {input_path}"))
 
 # Check if input directory exists, if not try alternative paths
 message("🔍 Checking for available data directories...")
@@ -99,9 +108,11 @@ possible_paths <- c(
 # Function to check if directory exists on GitHub
 check_github_directory <- function(path) {
   api_url <- glue::glue("https://api.github.com/repos/{owner}/{repo}/contents/{path}")
-  response <- GET(api_url, 
-                  authenticate(token, ""),
-                  add_headers("Accept" = "application/vnd.github.v3+json"))
+  response <- if (nzchar(token)) {
+    GET(api_url, authenticate(token, ""), add_headers("Accept" = "application/vnd.github.v3+json"))
+  } else {
+    GET(api_url, add_headers("Accept" = "application/vnd.github.v3+json"))
+  }
   return(status_code(response) == 200)
 }
 
@@ -178,6 +189,17 @@ save_and_upload_to_github <- function(
     message(glue::glue("ℹ️  Using provided file: {local_path}"))
   }
   
+  if (!allow_github_write) {
+    local_output_path <- normalizePath(github_path, winslash = "/", mustWork = FALSE)
+    dir.create(dirname(local_output_path), recursive = TRUE, showWarnings = FALSE)
+    if (normalizePath(local_path, winslash = "/", mustWork = FALSE) != local_output_path) {
+      file.copy(local_path, local_output_path, overwrite = TRUE)
+      if (object_type %in% c("data", "plot")) unlink(local_path)
+    }
+    message(glue::glue("Saved locally to: {local_output_path}"))
+    return(invisible(local_output_path))
+  }
+
   # Encode file content to Base64 for GitHub API
   encoded_content <- base64enc::base64encode(local_path)
   

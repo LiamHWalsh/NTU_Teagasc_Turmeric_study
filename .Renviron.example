@@ -1,0 +1,12 @@
+# Copy this file to .Renviron and fill in local values.
+# Do not commit the real .Renviron file.
+
+GITHUB_PAT=
+GITHUB_TOKEN=
+ENABLE_GITHUB_UPLOAD=0
+
+# Optional: override the preferred local R library path used by some scripts.
+NTU_R_LIB=
+
+# Optional: path to the GPS/injury workbook used by scripts 5 and the alignment export.
+GPS_INJURY_XLSX=C:/Users/your_user/Downloads/OneDrive_1_3-1-2026/GPS and injury data_23_10.xlsx

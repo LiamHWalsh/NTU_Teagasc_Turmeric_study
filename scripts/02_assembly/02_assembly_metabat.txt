@@ -1,0 +1,120 @@
+
+
+#####################################################################################################################################################################################################
+# Assembly command on athfood_data
+#####################################################################################################################################################################################################
+
+cd /data/Food/analysis/R1909_CODIET/Isabel_ICL_Study/scripts/02_assembly
+
+#emacs 02_assembly_Isabel_ICL.sh 
+###########################
+
+
+
+#!/bin/sh
+#SBATCH --error 02err_assembly_Isabel_ICL
+#SBATCH --output 02out_assembly_Isabel_ICL
+#SBATCH --job-name 02assembly_Isabel_ICL
+#SBATCH -p Priority,Background,GPU
+#SBATCH -N 1
+#SBATCH --cpus-per-task=10
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=liam.walsh@teagasc.ie
+
+
+#####################################################################################################################################################################################################
+#folder set up
+
+base_folder="/data/Food/analysis/R1909_CODIET/Isabel_ICL_Study/analysis/"
+input_folder="/data/Food/analysis/R1909_CODIET/Isabel_ICL_Study/01_preprocessing_v2/01_fasnicar/Isabel_ICL_Study/"
+
+out_folder="$base_folder"/02_assembly/
+mkdir -p "$base_folder"/02_assembly/02_megahit
+mkdir -p "$base_folder"/02_assembly/02_bowtie
+mkdir /"$base_folder"02_assembly/02_metabat/
+
+#####################################################################################################################################################################################################
+
+#for loop
+for folder in $( find $input_folder -type d -mindepth 1)
+
+do
+
+
+
+
+for filename_modify in $(find "$folder" -type f  -name "*.fastq.bz2" | awk -F / '{print $NF}' | sed 's/_...fastq.bz2//g' | sed 's/SRR//;s/ERR//' | sort -u ) 
+
+do
+
+folder_base=$(echo "$folder" | awk -F / '{print $NF}' )
+
+
+if [ -f "$base_folder"/02_assembly/02_megahit/"$filename_modify"_megahit/"$filename_modify"_megahit.contigs.fa ]; then
+   echo "Folder already exists for "$folder"/"$filename". Skipping..."
+else
+   echo "Folder does not exist. Proceeding with the rest of the script."
+
+
+
+
+#####################################################################################################################################################################################################
+#for assembly
+
+module load megahit/1.2.9
+
+
+megahit -1 $input_folder/"$folder_base"/"$filename_modify"_R1.fastq.bz2 -2 $input_folder/"$folder_base"/"$filename_modify"_R2.fastq.bz2 -r $input_folder/"$folder_base"/"$filename_modify"_UN.fastq.bz2 -t $SLURM_CPUS_PER_TASK --out-prefix "$filename_modify"_megahit -o "$out_folder"/02_megahit/"$filename_modify"_megahit 
+
+module unload megahit/1.2.9 
+#--min-contig-len 1000
+
+
+#####################################################################################################################################################################################################
+
+
+
+module load bowtie2/2.5.3
+
+module load samtools/1.19.2
+
+bowtie2-build "$out_folder"/02_megahit/"$filename_modify"_megahit/"$filename_modify"_megahit.contigs.fa "$out_folder"/02_bowtie/"$filename_modify"_megahit.contigs -p $SLURM_CPUS_PER_TASK
+
+
+bowtie2 -x "$out_folder"/02_bowtie/"$filename_modify"_megahit.contigs -1 $input_folder/"$folder_base"/"$filename_modify"_R1.fastq.bz2 -2 $input_folder/"$folder_base"/"$filename_modify"_R2.fastq.bz2  -S "$out_folder"/02_bowtie/"$filename_modify".sam -p $SLURM_CPUS_PER_TASK --very-sensitive-local --no-unal
+
+samtools view -bS "$out_folder"/02_bowtie/"$filename_modify".sam -o "$out_folder"/02_bowtie/"$filename_modify".bam -@ $SLURM_CPUS_PER_TASK
+
+samtools sort "$out_folder"/02_bowtie/"$filename_modify".bam -o "$out_folder"/02_bowtie/"$filename_modify".sorted.bam -m 8G -@ $SLURM_CPUS_PER_TASK
+samtools index "$out_folder"/02_bowtie/"$filename_modify".sorted.bam -@ $SLURM_CPUS_PER_TASK
+
+module unload bowtie2/2.5.3
+
+module unload samtools/1.19.2 
+
+
+
+module load metabat2/2.15
+
+
+
+
+jgi_summarize_bam_contig_depths --outputDepth "$out_folder"/02_metabat/"$filename_modify"_depth.txt "$out_folder"/02_bowtie/"$filename_modify".sorted.bam
+
+
+metabat2 -m 1500 -i "$out_folder"/02_megahit/"$filename_modify"_megahit/"$filename_modify"_megahit.contigs.fa -a "$out_folder"/02_metabat/"$filename_modify"_depth.txt -o "$out_folder"/02_metabat/"$filename_modify"_metabat --unbinned --seed 0 -t $SLURM_CPUS_PER_TASK
+
+module unload metabat2/2.15
+
+
+fi
+done
+
+done 
+
+
+
+
+
+
+

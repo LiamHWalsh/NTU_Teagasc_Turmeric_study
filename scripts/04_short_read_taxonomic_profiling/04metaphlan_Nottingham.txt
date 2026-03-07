@@ -1,0 +1,124 @@
+#!/bin/sh
+#SBATCH --error 04err_metaphlan_Nottingham
+#SBATCH --output 04out_metaphlan_Nottingham
+#SBATCH --job-name 04metaphlan_Nottingham
+#SBATCH -p Priority,Background,GPU
+#SBATCH -N 1
+#SBATCH --cpus-per-task=10
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=liam.walsh@teagasc.ie
+
+
+# Folder creation
+###########################
+
+
+study=NottinghamJuly2025-460410994
+
+# modify output directory here for moving fastq files regardless if they are compressed or not
+
+directory=/data/Food/analysis/R1909_CODIET/"$study"/analysis/01_preprocessing/temp
+
+interleaved_dir=/data/Food/analysis/R1909_CODIET/"$study"/analysis/01_preprocessing/01_interleaved/
+
+db_folder=/data/Food/analysis/R1838_DOMINO/MASTER/04_short_read_taxonomic_profiling/04metaphlan/04metaphlan_db/
+
+
+
+
+metaphlan_output=/data/Food/analysis/R1909_CODIET/"$study"/analysis/04_short_read_taxonomic_profiling/04metaphlan/04metaphlan_results/
+
+###########################
+
+for folder in $( find   /data/Food/analysis/R1909_CODIET/"$study"/01_preprocessing/01_fasnicar/ -type d -maxdepth 1 | sed '1d' )
+do
+folder_base=$(echo $folder |  awk -F / '{print $NF}')
+
+
+for filepath in $( find "$folder" -type f  -name "*.fastq.bz2" | sed 's/_...fastq.*$*//g' | sort -u |  awk -F / '{print $NF}'  )
+do
+
+
+
+if find "${interleaved_dir}" -type f -name "*$filepath*" | grep -q .; then
+
+echo "${filepath}_interleaved found. Moving on."
+
+else
+    echo "${filepath}_interleaved not found. proceeding with metaphlan script"
+
+
+rm -r $directory
+mkdir -p $directory
+
+find "$folder" -type f \( -name "*${filepath}*" -and -name "*_R*.fastq.bz2*" \) -exec cp {}  $directory \;
+
+find "$directory" -type f -name "*.bz2" -exec bash -c '
+ for file do
+        gunzip "$file"
+    done
+' bash {} +
+
+
+
+
+files=("${directory}"/*.fastq*)
+
+
+if [ ${#files[@]} -eq 2 ]; then
+    # Save the file paths as separate variables
+    file1="${files[0]}"
+    file2="${files[1]}"
+
+
+else
+    echo "Error: There are not exactly two FASTQ files in the directory. For "$filepath""
+fi
+module load bbmap/39.06
+
+bbmerge.sh in1=$file1 \
+ in2=$file2 \
+ out=$interleaved_dir/"$filepath"_interleaved.fastq threads=$SLURM_CPUS_PER_TASK
+
+ module unload bbmap/39.06
+
+
+
+module load metaphlan/4.1.1
+
+
+metaphlan $interleaved_dir/"$filepath"_interleaved.fastq --input_type fastq --output_file "$metaphlan_output"/"$filepath"_metaphlan.txt --nproc $SLURM_CPUS_PER_\
+TASK --add_viruses --unclassified_estimation --bowtie2db $db_folder --index mpa_vOct22_CHOCOPhlAnSGB_202403 --bowtie2out /data/Food/analysis/R1909_CODIET/CoDietRun1-439003101/analysis/04_short_read_taxonomic_profiling/04metaphlan/04_bowtie/"$filepath".bowtie2out.txt --force
+
+
+module unload metaphlan/4.1.1
+
+
+
+rm -r $directory
+fi
+done # end of filepath
+done # end of folder
+
+
+
+
+
+
+
+
+
+
+metaphlan_output=/data/Food/analysis/R1909_CODIET/NottinghamJuly2025-460410994/analysis/04_short_read_taxonomic_profiling/04metaphlan/04metaphlan_results/
+
+
+cd "$metaphlan_output"
+module load metaphlan/4.1.1
+
+merge_metaphlan_tables.py *metaphlan.txt > merged_abundance_table.txt
+
+module unload metaphlan/4.1.1
+
+
+
+
