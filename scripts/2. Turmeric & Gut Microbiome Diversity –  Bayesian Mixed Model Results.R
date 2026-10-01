@@ -299,7 +299,8 @@ fit_bayesian_lmm <- function(data, response_var, group_var = "turmeric_status") 
 make_alpha_plot <- function(data, y_var, profile_type, y_label) {
   p <- ggplot(data, aes(x = timepoint, y = .data[[y_var]], 
                         fill = turmeric_status, color = turmeric_status)) +
-    geom_line(aes(group = block_number), alpha = 0.3, linewidth = 0.5) +
+    geom_line(aes(group = interaction(block_number, turmeric_status)),
+          alpha = 0.3, linewidth = 0.5) +
     geom_boxplot(outlier.shape = NA, alpha = 0.6, position = position_dodge(0.8)) +
     geom_jitter(position = position_jitterdodge(jitter.width = 0.2, dodge.width = 0.8),
                 size = 3, alpha = 0.7) +
@@ -363,32 +364,33 @@ cat("═════════════════════════
 
 data <- list()
 files_to_load <- c(
-  "04_diversity_analysis/species_alpha_diversity.csv",
-  "04_diversity_analysis/functional_alpha_diversity.csv",
-  "03_functional_profiling/functional_profile_filtered.csv",
-  "02_taxonomic_profiling/species_profile_filtered.csv"
+  "results/Processed/04_diversity_analysis/species_alpha_diversity.csv",
+  "results/Processed/04_diversity_analysis/functional_alpha_diversity.csv",
+  "results/Processed/03_functional_profiling/functional_profile_filtered.csv",
+  "results/Processed/02_taxonomic_profiling/species_profile_filtered.csv",
+  "results/Raw/analysis_metadata_current.csv"
 )
 
 for (file_name in files_to_load) {
   file_url <- file.path(github_base, "results","Processed", file_name)
   clean_name <- tools::file_path_sans_ext(basename(file_name))
-  data[[clean_name]] <- load_github_file(file_url, token)
+  data[[clean_name]] <- if (file.exists(file_name)) {
+    read_csv(file_name, show_col_types = FALSE)
+  } else {
+    file_url <- paste0(github_base, "/", file_name)
+    load_github_file(file_url, token)
+  }
   cat("✅", file_name, "\n")
 }
 
-# Turmeric status lookup (same as original)
-turmeric_status <- data.frame(
-  ID = c(3,4,5,6,7,9,11,14,15,16,18,19,20,21,22,23),
-  status = c(
-    "Didn't take turmeric", "Turmeric 6 months", "Turmeric 6 months",
-    "Didn't take turmeric", "Turmeric 6 months", "Turmeric 6 months",
-    "Turmeric 3 months", "Baseline sample only", "Turmeric 6 months",
-    "Turmeric 6 months", "Didn't take turmeric", "Baseline sample only",
-    "Turmeric 3 months", "Turmeric 6 months", "Turmeric 6 months",
-    "Baseline sample only"
-  ),
-  stringsAsFactors = FALSE
-)
+cohort_metadata <- data$analysis_metadata_current %>%
+  mutate(
+    block_number = as.integer(participant_id),
+    block_letter = str_to_upper(block_letter),
+    timepoint = factor(timepoint, levels = c("Baseline", "2_weeks", "6_months")),
+    turmeric_group = factor(turmeric_group, levels = c("Control", "Treatment", "Stopped")),
+    turmeric_status = factor(turmeric_status, levels = c("Not taken", "Taken"))
+  )
 
 # ────────────────────────────────────────────────────────────────────────────────
 # Section: Main Bayesian Analysis Loop
@@ -404,67 +406,10 @@ for (alpha_type in c("species_alpha_diversity", "functional_alpha_diversity")) {
   
   cat(glue::glue("\nANALYZING: {profile_type} Alpha Diversity\n"))
   
-  # Prepare metadata (same as original)
   ids <- unique(data[[alpha_type]]$sample_id)
-  split_ids <- str_split_fixed(ids, "_", 3)
-  
-  sample_ids <- data.frame(
-    full_id = ids,
-    block_code = split_ids[,2],
-    block_number = as.integer(gsub("[^0-9]", "", split_ids[,2])),
-    block_letter = gsub("[0-9]", "", split_ids[,2]),
-    stringsAsFactors = FALSE
-  )
-  
-  sample_ids <- merge(sample_ids, turmeric_status,
-                      by.x = "block_number", by.y = "ID", all.x = TRUE)
-  
-  sample_ids$timepoint <- "Baseline"
-  sample_ids$timepoint[sample_ids$block_letter %in% c("a","A")] <- "Baseline"
-  sample_ids$timepoint[sample_ids$block_letter %in% c("b","B")] <- "2_weeks"
-  sample_ids$timepoint[sample_ids$block_letter %in% c("c","C")] <- "6_months"
-  
-  sample_ids$turmeric_group <- "Control"
-  sample_ids$turmeric_group[
-    grepl("Turmeric 6 months", sample_ids$status) & 
-      sample_ids$block_letter %in% c("c", "C")
-  ] <- "Treatment"
-  
-  sample_ids$turmeric_group[
-    sample_ids$status == "Turmeric 3 months" & 
-      sample_ids$block_letter == "C"
-  ] <- "Stopped"
-  
-  for (i in 1:nrow(sample_ids)) {
-    if (sample_ids$timepoint[i] %in% c("Baseline", "2_weeks")) {
-      participant_id <- sample_ids$block_number[i]
-      has_treatment <- any(
-        sample_ids$block_number == participant_id & 
-          sample_ids$turmeric_group == "Treatment"
-      )
-      if (has_treatment) sample_ids$turmeric_group[i] <- "Treatment"
-    }
-  }
-  
-  sample_ids$block_letter <- str_to_upper(sample_ids$block_letter)
-  
-  analysis_data <- merge(sample_ids, data[[alpha_type]],
-                         by.x = "full_id", by.y = "sample_id", all.x = TRUE)
-  
-  filtered_data <- analysis_data %>%
-    filter(turmeric_group != "Stopped") %>%
-    mutate(
-      timepoint = factor(timepoint, levels = c("Baseline", "2_weeks", "6_months")),
-      turmeric_group = factor(turmeric_group, levels = c("Control", "Treatment"))
-    )
-  
-  filtered_data$turmeric_status <- "Not taken"
-  filtered_data$turmeric_status[
-    filtered_data$block_letter == "C" & 
-      filtered_data$status == "Turmeric 6 months"
-  ] <- "Taken"
-  filtered_data$turmeric_status <- factor(filtered_data$turmeric_status, 
-                                          levels = c("Not taken", "Taken"))
+  sample_ids <- cohort_metadata %>% filter(sample_id %in% ids)
+  analysis_data <- inner_join(sample_ids, data[[alpha_type]], by = "sample_id")
+  filtered_data <- analysis_data %>% filter(turmeric_group != "Stopped")
   
   # Run Bayesian analyses
   metrics <- c("Richness", "Shannon", "Simpson")

@@ -27,9 +27,9 @@ README.md                                 GitHub landing page
 
 | Script | Role | Primary inputs | Primary outputs |
 |---|---|---|---|
-| `scripts/1. Diversity_index_formation_notthingham.R` | Derives alpha/beta diversity from microbiome profile tables | `results/Raw/metaphlan_results_Notthingham_v1.csv`, `results/Raw/HUMAnN_merged_pathabundance_cpm.tsv` | `results/Processed/02_taxonomic_profiling/`, `results/Processed/03_functional_profiling/`, `results/Processed/04_diversity_analysis/` |
-| `scripts/2. Turmeric & Gut Microbiome Diversity –  Bayesian Mixed Model Results.R` | Bayesian mixed-effects models for richness, Shannon, Simpson | `results/Processed/04_diversity_analysis/species_alpha_diversity.csv`, `results/Processed/04_diversity_analysis/functional_alpha_diversity.csv` | `results/Processed/05_statistical_analysis/`, `figures/05_statistical_analysis/` |
-| `scripts/3. Beta diversity.R` | Exact CLR-delta test, PERMANOVA/PERMDISP sensitivity analyses, ordinations | `results/Processed/02_taxonomic_profiling/species_profile_filtered.csv`, `results/Processed/03_functional_profiling/functional_profile_filtered.csv`, beta-distance tables in `results/Processed/04_diversity_analysis/` | `results/Processed/05_statistical_analysis/`, `figures/05_statistical_analysis/` |
+| `scripts/1. Diversity_index_formation_notthingham.R` | Derives alpha/beta diversity from microbiome profile tables | `results/Raw/paired_without_unclassified_abundance_table_species.tsv`, `results/Raw/HUMAnN_merged_pathabundance_cpm.tsv`, `results/Raw/analysis_metadata_current.csv` | `results/Processed/02_taxonomic_profiling/`, `results/Processed/03_functional_profiling/`, `results/Processed/04_diversity_analysis/` |
+| `scripts/2. Turmeric & Gut Microbiome Diversity –  Bayesian Mixed Model Results.R` | Bayesian mixed-effects models for richness, Shannon, Simpson | Alpha-diversity CSVs in `results/Processed/04_diversity_analysis/`, `results/Raw/analysis_metadata_current.csv` | `results/Processed/05_statistical_analysis/`, `figures/05_statistical_analysis/` |
+| `scripts/3. Beta diversity.R` | Exact CLR-delta test, PERMANOVA/PERMDISP sensitivity analyses, ordinations | Filtered and unfiltered profiles, beta-distance tables in `results/Processed/`, `results/Raw/analysis_metadata_current.csv` | `results/Processed/05_statistical_analysis/`, `figures/05_statistical_analysis/` |
 | `scripts/4. maaslin3_results_SMALL_SAMPLE.R` | Small-sample MaAsLin3 validation/screening layer | Processed species and functional profiles plus MaAsLin3 result tables | `results/Processed/05_statistical_analysis/differential_abundance/` |
 | `scripts/4e_honest_smallN_effectsize_taxa_function_pipeline.R` | Exploratory paired strain/genus/pathway effect-size pipeline | `results/Processed/02_taxonomic_profiling/species_profile_filtered.csv`, pathway abundance tables, participant metadata encoded in sample IDs | `results/Processed/05_statistical_analysis/honest_small_n_strain/` |
 | `scripts/5_microbiome_gps_injury_associations.R` | Exploratory microbiome vs GPS/injury association analysis | Alpha diversity, strain/genus/pathway outputs from `4e`, GPS/injury workbook or committed prepared cohort CSV | `results/Processed/05_statistical_analysis/gps_injury_associations/` |
@@ -85,8 +85,3 @@ Before rerunning locally, create a `.Renviron` from `.Renviron.example` and set 
 
 Most manuscript-facing scripts now save locally under `results/Processed/` and `figures/` unless explicit GitHub upload is enabled.
 
-## Caveats
-
-- The repository still contains legacy scripts and duplicate manuscript-staging files.
-- Several file names include spaces and punctuation.
-- The codebase is reproducible, but it is still closer to an analysis repository than a polished software package.

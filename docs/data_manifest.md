@@ -8,17 +8,28 @@ Script:
 - `scripts/1. Diversity_index_formation_notthingham.R`
 
 Primary inputs:
-- `results/Raw/metaphlan_results_Notthingham_v1.csv`
+- `results/Raw/paired_without_unclassified_abundance_table_species.tsv`
 - `results/Raw/HUMAnN_merged_pathabundance_cpm.tsv`
+- `results/Raw/analysis_metadata_current.csv`
+- `results/Raw/total_fascinar_results.tsv` (sequencing-run summary)
+
+The MetaPhlAn table `results/Raw/metaphlan_results_Notthingham_v1.csv` remains
+available as a fallback when the species-level table is absent.
+
+Participant-level profiles and diversity outputs are restricted to the 42
+samples listed in the metadata. The two negative controls remain in the raw
+abundance inputs but are not included in participant analyses.
 
 Primary outputs:
 - `results/Processed/02_taxonomic_profiling/species_profile_unfiltered.csv`
 - `results/Processed/02_taxonomic_profiling/species_profile_filtered.csv`
 - `results/Processed/02_taxonomic_profiling/species_prevalence_breakdown.csv`
 - `results/Processed/03_functional_profiling/functional_profile_filtered.csv`
+- `results/Processed/03_functional_profiling/functional_profile_unfiltered.csv`
 - `results/Processed/03_functional_profiling/functional_prevalence_breakdown.csv`
 - `results/Processed/04_diversity_analysis/species_alpha_diversity.csv`
 - `results/Processed/04_diversity_analysis/functional_alpha_diversity.csv`
+- `results/Raw/analysis_metadata_current.csv`
 - `results/Processed/04_diversity_analysis/species_beta_diversity_distance_matrix.csv`
 - `results/Processed/04_diversity_analysis/functional_beta_diversity_distance_matrix.csv`
 
@@ -42,9 +53,15 @@ Script:
 
 Primary inputs:
 - `results/Processed/02_taxonomic_profiling/species_profile_filtered.csv`
+- `results/Processed/02_taxonomic_profiling/species_profile_unfiltered.csv`
 - `results/Processed/03_functional_profiling/functional_profile_filtered.csv`
+- `results/Processed/03_functional_profiling/functional_profile_unfiltered.csv`
 - `results/Processed/04_diversity_analysis/species_beta_diversity_distance_matrix.csv`
 - `results/Processed/04_diversity_analysis/functional_beta_diversity_distance_matrix.csv`
+- `results/Raw/analysis_metadata_current.csv`
+
+The unfiltered profiles feed the Bray-Curtis PCoA plots; existing filtered
+profiles and distance matrices remain the inputs to statistical analyses.
 
 Primary outputs:
 - statistical summaries in `results/Processed/05_statistical_analysis/`
