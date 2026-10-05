@@ -117,12 +117,15 @@ check_github_directory <- function(path) {
 }
 
 # Try to find existing directory
-found_path <- NULL
-for (path in possible_paths) {
-  if (check_github_directory(path)) {
-    found_path <- path
-    message(glue::glue("✅ Found data directory: {path}"))
-    break
+local_input_path <- file.path("results", "Raw")
+found_path <- if (dir.exists(local_input_path)) "results/Raw" else NULL
+if (is.null(found_path)) {
+  for (path in possible_paths) {
+    if (check_github_directory(path)) {
+      found_path <- path
+      message(glue::glue("✅ Found data directory: {path}"))
+      break
+    }
   }
 }
 
@@ -243,28 +246,34 @@ save_and_upload_to_github <- function(
 # ────────────────────────────────────────────────────────────────────────────────
 # Section: List All Files in GitHub Directory
 # ────────────────────────────────────────────────────────────────────────────────
-message(glue::glue("📂 Fetching file list from: {owner}/{repo}/{input_path}"))
+message(glue::glue("📂 Reading input files from: {input_path}"))
 
-# Use GitHub API to list directory contents
-api_url <- glue::glue("https://api.github.com/repos/{owner}/{repo}/contents/{input_path}")
-response <- GET(api_url, 
-                authenticate(token, ""),
-                add_headers("Accept" = "application/vnd.github.v3+json"))
+local_input_dir <- file.path(input_path)
+if (dir.exists(local_input_dir)) {
+  file_data <- data.frame(
+    name = list.files(local_input_dir, full.names = FALSE),
+    type = "file",
+    download_url = NA_character_,
+    stringsAsFactors = FALSE
+  )
+} else {
+  api_url <- glue::glue("https://api.github.com/repos/{owner}/{repo}/contents/{input_path}")
+  response <- if (nzchar(token)) {
+    GET(api_url, authenticate(token, ""),
+        add_headers("Accept" = "application/vnd.github.v3+json"))
+  } else {
+    GET(api_url, add_headers("Accept" = "application/vnd.github.v3+json"))
+  }
 
-if (status_code(response) != 200) {
-  stop(glue::glue("❌ Failed to access directory. Status code: {status_code(response)}
-                   Check: 
-                   1. Repository exists and is accessible
-                   2. Directory path is correct: {input_path}
-                   3. GitHub token has proper permissions"))
+  if (status_code(response) != 200) {
+    stop(glue::glue("Failed to access input directory: {input_path}"))
+  }
+
+  content_list <- content(response, as = "text", encoding = "UTF-8")
+  files_info <- fromJSON(content_list)
+  file_data <- files_info[files_info$type == "file", ]
 }
 
-# Parse the response
-content_list <- content(response, as = "text", encoding = "UTF-8")
-files_info <- fromJSON(content_list)
-
-# Filter for actual files (not directories) and exclude .docx files
-file_data <- files_info[files_info$type == "file", ]
 file_data <- file_data[!grepl("\\.docx$", file_data$name, ignore.case = TRUE), ]
 
 message(glue::glue("✅ Found {nrow(file_data)} files to import (excluding .docx files)"))
@@ -277,55 +286,56 @@ data <- list()  # Initialize an empty list to store data
 for (i in 1:nrow(file_data)) {
   
   file_name <- file_data$name[i]
+  local_file <- file.path(input_path, file_name)
   file_url <- file_data$download_url[i]
   
   message(glue::glue("📥 Loading: {file_name}"))
   
-  # Attempt to retrieve the file from GitHub
-  response <- GET(file_url, authenticate(token, ""))
-  
-  if (status_code(response) == 200) {
-    
-    # Extract file extension
-    file_ext <- tools::file_ext(file_name)
-    
-    # Create a clean name for the list (remove extension)
-    clean_name <- gsub(paste0("\\.", file_ext, "$"), "", file_name)
-    
-    # Process based on file type
-    tryCatch({
-      if (file_ext == "csv") {
-        file_content <- content(response, as = "text", encoding = "UTF-8")
-        data[[clean_name]] <- read_csv(file_content, show_col_types = FALSE)
-        message(glue::glue("   ✅ Loaded {file_name} ({nrow(data[[clean_name]])} rows)"))
-        
-      } else if (file_ext == "tsv") {
-        file_content <- content(response, as = "text", encoding = "UTF-8")
-        data[[clean_name]] <- read_delim(file_content, delim = "\t", 
-                                         escape_double = FALSE, 
-                                         trim_ws = TRUE, 
-                                         show_col_types = FALSE)
-        message(glue::glue("   ✅ Loaded {file_name} ({nrow(data[[clean_name]])} rows)"))
-        
-      } else if (file_ext %in% c("xls", "xlsx")) {
-        # Download the file to a temporary location
-        temp_file <- tempfile(fileext = paste0(".", file_ext))
-        writeBin(content(response, as = "raw"), temp_file)
-        data[[clean_name]] <- read_excel(temp_file)
-        unlink(temp_file)  # Remove temporary file after reading
-        message(glue::glue("   ✅ Loaded {file_name} ({nrow(data[[clean_name]])} rows)"))
-        
-      } else {
-        warning(glue::glue("   ⚠️  Skipping {file_name} - unsupported file type"))
-      }
-      
-    }, error = function(e) {
-      warning(glue::glue("   ❌ Error reading {file_name}: {e$message}"))
-    })
-    
+  file_ext <- tolower(tools::file_ext(file_name))
+  clean_name <- gsub(paste0("\\.", file_ext, "$"), "", file_name)
+  file_content <- NULL
+
+  if (file.exists(local_file)) {
+    file_content <- local_file
   } else {
-    warning(glue::glue("   ❌ Unable to download {file_name} - Status: {status_code(response)}"))
+    response <- if (nzchar(token)) {
+      GET(file_url, authenticate(token, ""))
+    } else {
+      GET(file_url)
+    }
+    if (status_code(response) == 200) {
+      file_content <- content(response, as = "raw")
+    } else {
+      warning(glue::glue("Unable to download {file_name}: HTTP {status_code(response)}"))
+      next
+    }
   }
+
+  tryCatch({
+    if (file_ext == "csv") {
+      input <- if (is.raw(file_content)) I(rawToChar(file_content)) else file_content
+      data[[clean_name]] <- read_csv(input, show_col_types = FALSE)
+    } else if (file_ext == "tsv") {
+      input <- if (is.raw(file_content)) I(rawToChar(file_content)) else file_content
+      data[[clean_name]] <- read_delim(input, delim = "\t", escape_double = FALSE,
+                                       trim_ws = TRUE, show_col_types = FALSE)
+    } else if (file_ext %in% c("xls", "xlsx")) {
+      if (is.raw(file_content)) {
+        temp_file <- tempfile(fileext = paste0(".", file_ext))
+        writeBin(file_content, temp_file)
+        data[[clean_name]] <- read_excel(temp_file)
+        unlink(temp_file)
+      } else {
+        data[[clean_name]] <- read_excel(file_content)
+      }
+    } else {
+      message(glue::glue("   Skipping unsupported file type: {file_name}"))
+      next
+    }
+    message(glue::glue("   ✅ Loaded {file_name} ({nrow(data[[clean_name]])} rows)"))
+  }, error = function(e) {
+    warning(glue::glue("   ❌ Error reading {file_name}: {e$message}"))
+  })
 }
 
 # Clean up metadata names for consistency
@@ -349,6 +359,8 @@ names(data)[which(names(data) == "total_fascinar_results")] <- "preprocessing"
 
 # Rename pathway data
 names(data)[which(names(data) == "HUMAnN_merged_pathabundance_cpm")] <- "pathways"
+names(data)[grep("paired_without_unclassified_abundance_table_species", names(data),
+                 ignore.case = TRUE)] <- "paired_species"
 
 # Clean and harmonise preprocessing metadata
 data[["preprocessing"]] <- data[["preprocessing"]] %>%
@@ -359,25 +371,35 @@ data[["preprocessing"]] <- data[["preprocessing"]] %>%
 
 # Prepare functional profile
 data[["functional_profile"]] <- data$pathways %>%
+  rename(Pathway = 1) %>%
+  filter(!grepl("UNMAPPED|UNINTEGRATED", Pathway), !grepl("\\|", Pathway)) %>%
   rename_with(~ gsub("_L001_concat_Abundance-CPM", "", .x))
-
-data[["functional_profile"]] <- data[["functional_profile"]][-c(grep("\\|", data[["functional_profile"]]$`# Pathway`)), ]
 
 # Convert to base data.frame so rownames are preserved
 fp <- as.data.frame(data[["functional_profile"]])
-rownames(fp) <- fp$`# Pathway`
-fp$`# Pathway` <- NULL
+rownames(fp) <- fp$Pathway
+fp$Pathway <- NULL
 data[["functional_profile"]] <- fp
 
-# Standardise and filter species profile
-data$metaphlan <- data$metaphlan %>% rename_with(~ gsub("_metaphlan", "", .))
-data[["species_profile"]] <- data$metaphlan %>%
-  column_to_rownames("clade_name") %>%
-  t() %>%
-  as.data.frame() %>%
-  select(which(grepl("\\|t__", names(.)))) %>%
-  t() %>%
-  as.data.frame()
+# Use Sai's already species-level table when available; retain the MetaPhlAn
+# fallback for earlier repository snapshots.
+if ("paired_species" %in% names(data)) {
+  data[["species_profile"]] <- data$paired_species %>%
+    rename(Taxa = 1) %>%
+    column_to_rownames("Taxa") %>%
+    as.data.frame()
+} else {
+  data$metaphlan <- data$metaphlan %>% rename_with(~ gsub("_metaphlan", "", .))
+  data[["species_profile"]] <- data$metaphlan %>%
+    column_to_rownames("clade_name") %>%
+    t() %>%
+    as.data.frame() %>%
+    select(which(grepl("\\|t__", names(.)))) %>%
+    t() %>%
+    as.data.frame()
+}
+
+species_profile_unfiltered <- data[["species_profile"]]
 
 # ────────────────────────────────────────────────────────────────────────────────
 # Section: Diversity Analysis Loop (Species & Functional)
@@ -387,6 +409,16 @@ data[["species_profile"]] <- data$metaphlan %>%
 diversity_results <- list()
 
 for (profile in c("species_profile", "functional_profile")) {
+
+  unfiltered_profile <- data[[profile]]
+  if ("analysis_metadata_current" %in% names(data)) {
+    sample_ids <- intersect(
+      data$analysis_metadata_current$sample_id,
+      colnames(unfiltered_profile)
+    )
+    unfiltered_profile <- unfiltered_profile[, sample_ids, drop = FALSE]
+    data[[profile]] <- unfiltered_profile
+  }
   
   # Filter: Keep features with max relative abundance > 0.1
   maxab <- apply(data[[profile]], 1, max, na.rm = TRUE)
@@ -402,19 +434,28 @@ for (profile in c("species_profile", "functional_profile")) {
   
   # Add taxonomic breakdown for species profile
   if (profile == "species_profile") {
-    prevalence_df <- prevalence_df %>%
-      cbind(str_split_fixed(.$feature, "\\|", 8)) %>%
-      rename(
-        kingdom = `1`, phylum = `2`, class = `3`, order = `4`,
-        family = `5`, genus = `6`, species = `7`, strain = `8`
-      )
+    if (any(grepl("\\|", prevalence_df$feature))) {
+      prevalence_df <- prevalence_df %>%
+        cbind(str_split_fixed(.$feature, "\\|", 8)) %>%
+        rename(
+          kingdom = `1`, phylum = `2`, class = `3`, order = `4`,
+          family = `5`, genus = `6`, species = `7`, strain = `8`
+        )
+    } else {
+      prevalence_df <- prevalence_df %>%
+        mutate(
+          kingdom = NA_character_, phylum = NA_character_, class = NA_character_,
+          order = NA_character_, family = NA_character_, genus = NA_character_,
+          species = sub("^s__", "", feature), strain = NA_character_
+        )
+    }
   }
   
   # Alpha diversity
   alpha_summary <- data.frame(
-    Richness = hillR::hill_taxa(t(data[[profile]]), q = 0),
-    Shannon = hillR::hill_taxa(t(data[[profile]]), q = 1),
-    Simpson = hillR::hill_taxa(t(data[[profile]]), q = 2)
+    Richness = hillR::hill_taxa(t(unfiltered_profile), q = 0),
+    Shannon = hillR::hill_taxa(t(unfiltered_profile), q = 1),
+    Simpson = hillR::hill_taxa(t(unfiltered_profile), q = 2)
   ) %>%
     rownames_to_column("sample_id")
   
@@ -435,8 +476,8 @@ for (profile in c("species_profile", "functional_profile")) {
   
   # Sample summary
   sample_summary <- data.frame(
-    sample_id = colnames(data[[profile]]),
-    total_abundance = colSums(data[[profile]]),
+    sample_id = colnames(unfiltered_profile),
+    total_abundance = colSums(unfiltered_profile),
     richness = alpha_summary$Richness,
     shannon = alpha_summary$Shannon,
     simpson = alpha_summary$Simpson
@@ -444,6 +485,7 @@ for (profile in c("species_profile", "functional_profile")) {
   
   # Store results
   diversity_results[[profile]] <- list(
+    unfiltered_profile = unfiltered_profile,
     filtered_profile = data[[profile]],
     prevalence = prevalence_df,
     alpha_diversity = alpha_summary,
@@ -523,7 +565,7 @@ save_and_upload_to_github(
 
 # 2. Upload unfiltered species profile
 save_and_upload_to_github(
-  object = data$metaphlan,
+  object = species_profile_unfiltered %>% rownames_to_column("Taxa"),
   object_type = "data",
   github_path = file.path(pipeline_paths$taxonomic, "species_profile_unfiltered.csv"),
   commit_message = "Update unfiltered species profile",
@@ -585,6 +627,14 @@ save_and_upload_to_github(
   object_type = "data",
   github_path = file.path(pipeline_paths$functional, "functional_profile_filtered.csv"),
   commit_message = "Update filtered functional profile",
+  owner = owner, repo = repo, branch = branch
+)
+
+save_and_upload_to_github(
+  object = diversity_results$functional_profile$unfiltered_profile %>% rownames_to_column("Pathway"),
+  object_type = "data",
+  github_path = file.path(pipeline_paths$functional, "functional_profile_unfiltered.csv"),
+  commit_message = "Update unfiltered functional profile",
   owner = owner, repo = repo, branch = branch
 )
 

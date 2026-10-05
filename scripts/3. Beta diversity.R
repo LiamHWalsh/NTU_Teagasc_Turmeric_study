@@ -173,7 +173,9 @@ cat("========================================\n")
 data <- list()
 files_to_load <- c(
   "02_taxonomic_profiling/species_profile_filtered.csv",
+  "02_taxonomic_profiling/species_profile_unfiltered.csv",
   "03_functional_profiling/functional_profile_filtered.csv",
+  "03_functional_profiling/functional_profile_unfiltered.csv",
   "04_diversity_analysis/functional_beta_diversity_distance_matrix.csv",
   "04_diversity_analysis/species_beta_diversity_distance_matrix.csv"
 )
@@ -183,80 +185,36 @@ for (file_name in files_to_load) {
   data[[clean_name]] <- load_local_or_github(file_name, token, owner, repo, branch)
   cat("Loaded", file_name, "\n")
 }
+
+metadata_path <- file.path("results", "Raw", "analysis_metadata_current.csv")
+data$analysis_metadata_current <- if (file.exists(metadata_path)) {
+  read_csv(metadata_path, show_col_types = FALSE)
+} else {
+  load_github_file(
+    paste0("https://raw.githubusercontent.com/", owner, "/", repo, "/", branch,
+           "/results/Raw/analysis_metadata_current.csv"),
+    token
+  )
+}
+
+cohort_metadata <- data$analysis_metadata_current %>%
+  mutate(
+    block_number = as.integer(participant_id),
+    block_letter = str_to_upper(block_letter),
+    timepoint = factor(timepoint, levels = c("Baseline", "2_weeks", "6_months")),
+    turmeric_group = factor(turmeric_group, levels = c("Control", "Treatment", "Stopped")),
+    turmeric_status = factor(turmeric_status, levels = c("Not taken", "Taken"))
+  )
 # Section: Metadata Preparation
 # Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
-turmeric_status <- data.frame(
-  ID = c(3,4,5,6,7,9,11,14,15,16,18,19,20,21,22,23),
-  status = c(
-    "Didn't take turmeric", "Turmeric 6 months", "Turmeric 6 months",
-    "Didn't take turmeric", "Turmeric 6 months", "Turmeric 6 months",
-    "Turmeric 3 months", "Baseline sample only", "Turmeric 6 months",
-    "Turmeric 6 months", "Didn't take turmeric", "Baseline sample only",
-    "Turmeric 3 months", "Turmeric 6 months", "Turmeric 6 months",
-    "Baseline sample only"
-  ),
-  stringsAsFactors = FALSE
-)
-
 prepare_metadata <- function(sample_ids) {
-  split_ids <- str_split_fixed(sample_ids, "_", 3)
-  
-  metadata <- data.frame(
-    sample_id = sample_ids,
-    block_code = split_ids[,2],
-    block_number = as.integer(gsub("[^0-9]", "", split_ids[,2])),
-    block_letter = gsub("[0-9]", "", split_ids[,2]),
-    stringsAsFactors = FALSE
-  )
-  
-  metadata <- merge(metadata, turmeric_status,
-                    by.x = "block_number", by.y = "ID", all.x = TRUE)
-  
-  metadata$timepoint <- "Baseline"
-  metadata$timepoint[metadata$block_letter %in% c("a","A")] <- "Baseline"
-  metadata$timepoint[metadata$block_letter %in% c("b","B")] <- "2_weeks"
-  metadata$timepoint[metadata$block_letter %in% c("c","C")] <- "6_months"
-  
-  metadata$turmeric_group <- "Control"
-  metadata$turmeric_group[
-    grepl("Turmeric 6 months", metadata$status) & 
-      metadata$block_letter %in% c("c", "C")
-  ] <- "Treatment"
-  
-  metadata$turmeric_group[
-    metadata$status == "Turmeric 3 months" & 
-      metadata$block_letter == "C"
-  ] <- "Stopped"
-  
-  for (i in 1:nrow(metadata)) {
-    if (metadata$timepoint[i] %in% c("Baseline", "2_weeks")) {
-      participant_id <- metadata$block_number[i]
-      has_treatment <- any(
-        metadata$block_number == participant_id & 
-          metadata$turmeric_group == "Treatment"
-      )
-      if (has_treatment) metadata$turmeric_group[i] <- "Treatment"
-    }
+  metadata <- cohort_metadata %>% filter(sample_id %in% sample_ids)
+  missing_ids <- setdiff(sample_ids, metadata$sample_id)
+  if (length(missing_ids) > 0) {
+    message(glue::glue("Excluding samples without cohort metadata: {paste(missing_ids, collapse = ', ')}"))
   }
-  
-  metadata$block_letter <- str_to_upper(metadata$block_letter)
-  
-  metadata$turmeric_status <- "Not taken"
-  metadata$turmeric_status[
-    metadata$block_letter == "C" & 
-      metadata$status == "Turmeric 6 months"
-  ] <- "Taken"
-  
-  metadata <- metadata %>%
-    filter(turmeric_group != "Stopped") %>%
-    mutate(
-      timepoint = factor(timepoint, levels = c("Baseline", "2_weeks", "6_months")),
-      turmeric_group = factor(turmeric_group, levels = c("Control", "Treatment")),
-      turmeric_status = factor(turmeric_status, levels = c("Not taken", "Taken"))
-    )
-  
-  return(metadata)
+  metadata %>% filter(turmeric_group != "Stopped")
 }
 
 # Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
@@ -562,13 +520,21 @@ run_exact_clr_delta_global <- function(abundance_df, metadata, profile_type) {
 # Section: Ordination Functions
 # Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
-run_pcoa <- function(beta_results) {
+run_pcoa <- function(abundance_df, metadata) {
   
   cat("\nÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â\n")
   cat("Running PCoA (Principal Coordinates Analysis)\n")
   cat("Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â\n")
   
-  pcoa_result <- cmdscale(beta_results$distance_matrix, k = 5, eig = TRUE)
+  feature_col <- colnames(abundance_df)[1]
+  abundance_matrix <- abundance_df %>%
+    column_to_rownames(feature_col) %>%
+    as.matrix()
+  storage.mode(abundance_matrix) <- "numeric"
+  sample_ids <- intersect(metadata$sample_id, colnames(abundance_matrix))
+  abundance_matrix <- t(abundance_matrix[, sample_ids, drop = FALSE])
+  bray_distance <- vegan::vegdist(abundance_matrix, method = "bray")
+  pcoa_result <- cmdscale(bray_distance, k = 2, eig = TRUE)
   
   # Calculate variance explained
   eigenvalues <- pcoa_result$eig[pcoa_result$eig > 0]
@@ -582,12 +548,11 @@ run_pcoa <- function(beta_results) {
   
   # Create ordination data frame
   pcoa_df <- data.frame(
-    sample_id = beta_results$metadata$sample_id,
+    sample_id = rownames(pcoa_result$points),
     PC1 = pcoa_result$points[, 1],
-    PC2 = pcoa_result$points[, 2],
-    PC3 = pcoa_result$points[, 3],
-    beta_results$metadata
-  )
+    PC2 = pcoa_result$points[, 2]
+  ) %>%
+    inner_join(metadata, by = "sample_id")
   
   return(list(
     pcoa = pcoa_result,
@@ -643,6 +608,10 @@ plot_pcoa <- function(pcoa_results, profile_type, subtitle_text = NULL) {
     pcoa_results$ordination_df,
     aes(x = PC1, y = PC2, color = turmeric_status, shape = timepoint)
   ) +
+    stat_ellipse(
+      aes(group = interaction(turmeric_status, timepoint), linetype = turmeric_status),
+      alpha = 0.5
+    ) +
     geom_point(size = 3.2, alpha = 0.8) +
     scale_color_brewer(palette = "Set1") +
     scale_shape_manual(values = c(16, 17, 15)) +
@@ -786,11 +755,13 @@ all_beta_results <- list()
 profile_mappings <- list(
   Species = list(
     profile = "species_profile_filtered",
-    distance_matrix = "species_beta_diversity_distance_matrix"
+    distance_matrix = "species_beta_diversity_distance_matrix",
+    pcoa_profile = "species_profile_unfiltered"
   ),
   Functional = list(
     profile = "functional_profile_filtered",
-    distance_matrix = "functional_beta_diversity_distance_matrix"
+    distance_matrix = "functional_beta_diversity_distance_matrix",
+    pcoa_profile = "functional_profile_unfiltered"
   )
 )
 
@@ -827,7 +798,8 @@ for (profile_type in names(profile_mappings)) {
   )
   
   # Ordination analyses
-  pcoa_results <- run_pcoa(beta_results)
+  pcoa_profile <- data[[profile_mappings[[profile_type]]$pcoa_profile]]
+  pcoa_results <- run_pcoa(pcoa_profile, metadata)
   nmds_results <- run_nmds(beta_results)
   
   # Store results
